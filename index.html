@@ -1,7 +1,10 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1220"><title>Top Burger | Menu</title><link rel="stylesheet" href="styles.css?v=1.0.0"></head><body>
-<header><div class="brand"><div class="logo">TB</div><div><h1>TOP BURGER</h1><small>المنيو الرسمي</small></div></div><button id="langBtn" class="ghost">EN</button></header>
-<main><section class="hero"><span class="pill">🍔 TOP BURGER</span><h2 id="heroTitle">اختار وجبتك المفضلة</h2><p id="heroText">الأسعار والصور متزامنة مباشرة مع نظام المطعم.</p></section>
-<section class="toolbar"><label id="branchLabel">الفرع</label><select id="branch"></select><input id="search" type="search" placeholder="ابحث في المنيو..."></section>
-<nav id="cats" class="cats"></nav><section id="status" class="status">جاري تحميل المنيو...</section><section id="products" class="grid"></section></main>
-<footer><b>TOP BURGER</b><span id="footerText">منيو إلكتروني</span></footer>
-<script src="app.js?v=1.0.0"></script></body></html>
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#b51f2b"><title>Top Burger | اطلب أونلاين</title><link rel="stylesheet" href="styles.css?v=2.0.0"></head><body>
+<div class="topline"></div><header class="header"><button id="searchBtn" class="circle">⌕</button><div class="brand"><div class="logo"><span>TOP</span><b>BURGER</b></div></div><button id="menuBtn" class="circle">☰</button></header>
+<div id="searchBar" class="searchbar hidden"><input id="search" type="search" placeholder="ابحث عن وجبتك..."><button id="closeSearch">✕</button></div>
+<main><section class="welcome"><div><b>TOP BURGER</b><span>🔥 طعم يستاهل التجربة</span></div><label>الفرع <select id="branch"></select></label></section>
+<section id="categoryView"><h2>اختار من المنيو</h2><div id="categoryCards" class="category-grid"></div></section>
+<section id="productsView" class="hidden"><div class="section-title"><button id="backBtn">←</button><h2 id="categoryTitle">المنيو</h2></div><div id="cats" class="cats"></div><div id="status" class="status">جاري تحميل المنيو...</div><div id="products" class="product-grid"></div></section></main>
+<button id="cartBar" class="cartbar"><span>ملخص الطلب</span><b id="cartCount">0</b><strong id="cartTotal">0 ج.م</strong></button>
+<div id="productModal" class="overlay hidden"><div class="sheet"><button class="close" data-close="productModal">✕</button><img id="modalImg" class="modal-img" alt=""><h2 id="modalName"></h2><div id="modalPrice" class="big-price"></div><label class="notes-label">ملاحظات الطلب<textarea id="modalNotes" placeholder="مثال: بدون بصل، الصوص على جنب..."></textarea></label><button id="addToCart" class="primary">أضف للطلب</button></div></div>
+<div id="cartModal" class="overlay hidden"><div class="sheet cart-sheet"><button class="close" data-close="cartModal">✕</button><h2>ملخص الطلب</h2><div id="cartItems"></div><div class="total-row"><span>الإجمالي</span><b id="cartModalTotal">0 ج.م</b></div><button id="checkoutBtn" class="primary">متابعة الطلب</button><p class="hint">إرسال الطلب للـ POS هنفعّله في المرحلة التالية بعد اعتماد الشكل والسلة.</p></div></div>
+<script src="app.js?v=2.0.0"></script></body></html>

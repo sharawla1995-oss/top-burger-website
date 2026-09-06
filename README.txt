@@ -1,6 +1,14 @@
-TOP BURGER WEBSITE V1
-1) Run supabase-website-v1.sql once in Supabase SQL Editor.
-2) Create a NEW GitHub repository (recommended: top-burger-website), do not overwrite restaurant-pos.
-3) Upload index.html, styles.css, app.js to the repository root.
-4) Settings > Pages > Deploy from branch > main / root.
-This website is read-only. It cannot create or modify POS data.
+TOP BURGER WEBSITE V2
+=====================
+نسخة تطوير واجهة الموقع والسلة.
+- تصميم مستوحى من هوية موقع Top Burger الحالية.
+- تصنيفات كبيرة بالصور.
+- المنتجات عمودان على الموبايل.
+- نافذة تفاصيل + ملاحظات.
+- سلة وملخص طلب ثابت.
+- الأسعار والصور والأصناف والفروع من Supabase/POS.
+- لا يرسل الطلب للـ POS بعد؛ هذه ستكون المرحلة التالية بعد اعتماد الشكل.
+
+التثبيت على GitHub Pages:
+ارفع index.html و styles.css و app.js فوق الملفات القديمة بنفس الأسماء.
+ملف SQL هو نفس SQL V1 ولا تحتاج لتشغيله مرة أخرى إذا الموقع الحالي يعمل.
