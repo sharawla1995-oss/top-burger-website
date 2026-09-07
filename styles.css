@@ -33,3 +33,6 @@
 .payment-choice{background:var(--site-surface)!important;color:var(--site-text)!important;border-color:color-mix(in srgb,var(--site-text) 22%,transparent)!important}
 .payment-choice small{color:color-mix(in srgb,var(--site-text) 65%,transparent)!important}
 .payment-instructions{background:color-mix(in srgb,var(--site-surface) 90%,var(--site-bg) 10%)!important;color:var(--site-text)!important}
+
+/* V5.1 branch pickup */
+.fulfillment-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 16px}.fulfillment-btn{border:1px solid rgba(0,0,0,.12);background:var(--site-surface);color:var(--site-text);padding:14px 10px;border-radius:16px;font-weight:800;font-size:15px}.fulfillment-btn.active{outline:3px solid var(--brand-accent);border-color:transparent}.hidden{display:none!important}
