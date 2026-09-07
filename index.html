@@ -7,4 +7,20 @@
 <button id="cartBar" class="cartbar"><span>ملخص الطلب</span><b id="cartCount">0</b><strong id="cartTotal">0 ج.م</strong></button>
 <div id="productModal" class="overlay hidden"><div class="sheet"><button class="close" data-close="productModal">✕</button><img id="modalImg" class="modal-img" alt=""><h2 id="modalName"></h2><div id="modalPrice" class="big-price"></div><label class="notes-label">ملاحظات الطلب<textarea id="modalNotes" placeholder="مثال: بدون بصل، الصوص على جنب..."></textarea></label><button id="addToCart" class="primary">أضف للطلب</button></div></div>
 <div id="cartModal" class="overlay hidden"><div class="sheet cart-sheet"><button class="close" data-close="cartModal">✕</button><h2>ملخص الطلب</h2><div id="cartItems"></div><div class="total-row"><span>الإجمالي</span><b id="cartModalTotal">0 ج.م</b></div><button id="checkoutBtn" class="primary">متابعة الطلب</button><p class="hint">المنيو والاختيارات والإضافات متزامنة مع الـ POS. إرسال الطلب للفرع هو الخطوة التالية.</p></div></div>
-<script src="app.js?v=3.0.0"></script></body></html>
+<script src="app.js?v=3.0.0"></script>
+<div id="checkoutModal" class="modal hidden">
+  <div class="sheet checkout-sheet">
+    <button class="x" data-close="checkoutModal">×</button>
+    <h2>بيانات التوصيل</h2>
+    <label class="field">الاسم<input id="customerName" autocomplete="name" placeholder="اسم العميل"></label>
+    <label class="field">رقم الموبايل<input id="customerPhone" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></label>
+    <label class="field">العنوان<textarea id="deliveryAddress" rows="3" placeholder="المنطقة، الشارع، رقم العمارة... "></textarea></label>
+    <label class="field">ملاحظات الطلب<textarea id="orderNotes" rows="2" placeholder="اختياري"></textarea></label>
+    <div class="checkout-summary"><span>إجمالي الأصناف</span><b id="checkoutTotal">0 ج.م</b></div>
+    <small class="delivery-note">رسوم التوصيل يؤكدها الفرع عند مراجعة الطلب.</small>
+    <button id="submitOrder" class="checkout-submit">تأكيد الطلب</button>
+  </div>
+</div>
+<div id="successModal" class="modal hidden"><div class="sheet success-sheet"><div class="success-icon">✓</div><h2>تم إرسال طلبك</h2><p>رقم الطلب: <b id="websiteOrderCode"></b></p><p>الفرع هيراجع الطلب ويؤكده.</p><button class="checkout-submit" data-close="successModal">تمام</button></div></div>
+
+</body></html>

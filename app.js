@@ -5,6 +5,7 @@ const $=s=>document.querySelector(s);
 let data={branches:[],categories:[],products:[],branchProducts:[],variants:[],modifiers:[],productModifiers:[],branch:null,cat:null,q:'',cart:[],selected:null,selectedVariant:null,selectedExtras:new Set()};
 
 async function get(path){const r=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{headers:H});if(!r.ok)throw new Error(await r.text());return r.json()}
+async function rpc(name,body){const r=await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`,{method:'POST',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify(body)});let d=null;try{d=await r.json()}catch{}if(!r.ok)throw new Error(d?.message||'تعذر إرسال الطلب');return d}
 const esc=(v='')=>String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 function money(n){return `${Number(n||0).toFixed(0)} ج.م`}
 function branchRow(p){return data.branchProducts.find(x=>String(x.branch_id)===String(data.branch)&&String(x.product_id)===String(p.id))}
@@ -104,5 +105,16 @@ $('#branch').onchange=e=>{data.branch=e.target.value;renderCategories();if(data.
 $('#searchBtn').onclick=()=>$('#searchBar').classList.toggle('hidden');$('#closeSearch').onclick=()=>$('#searchBar').classList.add('hidden');
 $('#search').oninput=e=>{data.q=e.target.value.trim();if($('#productsView').classList.contains('hidden')&&data.categories[0])openCategory(data.categories[0].id);renderProducts()};
 $('#addToCart').onclick=addSelected;$('#cartBar').onclick=()=>$('#cartModal').classList.remove('hidden');
-$('#checkoutBtn').onclick=()=>alert('المنيو والاختيارات والإضافات مربوطين بالـ POS. إرسال الطلب للفرع هنفعّله في الخطوة التالية.');
+$('#checkoutBtn').onclick=()=>{if(!data.cart.length)return;$('#checkoutTotal').textContent=money(data.cart.reduce((s,x)=>s+x.qty*x.price,0));$('#cartModal').classList.add('hidden');$('#checkoutModal').classList.remove('hidden')};
+$('#submitOrder').onclick=async()=>{
+  const name=$('#customerName').value.trim(),phone=$('#customerPhone').value.trim(),address=$('#deliveryAddress').value.trim(),notes=$('#orderNotes').value.trim();
+  if(name.length<2)return alert('اكتب اسم العميل');if(phone.replace(/\D/g,'').length<8)return alert('اكتب رقم موبايل صحيح');if(address.length<5)return alert('اكتب عنوان التوصيل');
+  const btn=$('#submitOrder');btn.disabled=true;btn.textContent='جاري إرسال الطلب...';
+  try{
+    const items=data.cart.map(x=>({product_id:x.product_id,variant_id:x.variant_id,qty:x.qty,modifier_ids:(x.extras||[]).map(e=>e.id),notes:x.notes||''}));
+    const d=await rpc('submit_website_order',{p_branch_id:Number(data.branch),p_customer_name:name,p_customer_phone:phone,p_delivery_address:address,p_notes:notes,p_items:items});
+    data.cart=[];renderCart();$('#checkoutModal').classList.add('hidden');$('#websiteOrderCode').textContent=d.code||('WEB-'+d.id);$('#successModal').classList.remove('hidden');
+    $('#customerName').value='';$('#customerPhone').value='';$('#deliveryAddress').value='';$('#orderNotes').value='';
+  }catch(e){alert(e.message||'تعذر إرسال الطلب')}finally{btn.disabled=false;btn.textContent='تأكيد الطلب'}
+};
 load();
