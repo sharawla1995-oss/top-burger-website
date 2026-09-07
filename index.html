@@ -1,4 +1,4 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#b51f2b"><title>اطلب أونلاين</title><link rel="stylesheet" href="styles.css?v=4.8.0"></head><body>
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#b51f2b"><title>اطلب أونلاين</title><link rel="stylesheet" href="styles.css?v=5.0.0"></head><body>
 
 <div id="branchGate" class="branch-gate">
   <div class="branch-gate-card">
@@ -9,6 +9,7 @@
   </div>
 </div>
 <div class="topline"></div><header class="header"><button id="searchBtn" class="circle">⌕</button><div class="brand"><div class="logo"><img data-business-logo class="business-logo-img hidden" alt=""><div data-business-logo-fallback><b data-business-name>Top Burger</b></div></div></div><button id="menuBtn" class="circle">☰</button></header>
+<div id="siteDrawer" class="site-drawer hidden"><div class="drawer-backdrop" data-drawer-close></div><aside class="drawer-panel"><div class="drawer-head"><b data-business-name>Top Burger</b><button data-drawer-close>✕</button></div><div id="drawerItems" class="drawer-items"></div></aside></div>
 <div id="searchBar" class="searchbar hidden"><input id="search" type="search" placeholder="ابحث عن وجبتك..."><button id="closeSearch">✕</button></div>
 <main><section class="welcome"><div><b data-business-name>Top Burger</b><span data-business-tagline>🔥 طعم يستاهل التجربة</span><small id="branchInfo" class="branch-current-status"></small><div id="branchContact" class="branch-contact"></div></div><label>الفرع <select id="branch"></select></label></section>
 <section id="categoryView"><h2>اختار من المنيو</h2><div id="categoryCards" class="category-grid"></div></section>
@@ -24,6 +25,7 @@
     <label class="field">رقم الموبايل<input id="customerPhone" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></label>
     <label class="field">العنوان<textarea id="deliveryAddress" rows="3" placeholder="المنطقة، الشارع، رقم العمارة... "></textarea></label>
     <label class="field">ملاحظات الطلب<textarea id="orderNotes" rows="2" placeholder="اختياري"></textarea></label>
+    <div id="websitePaymentBox" class="payment-box"><h3>طريقة الدفع</h3><div id="websitePaymentMethods" class="payment-methods"></div><div id="paymentInstructions" class="payment-instructions hidden"></div><label id="paymentReferenceField" class="field hidden">رقم مرجع التحويل<input id="paymentReference" placeholder="اختياري"></label><label id="paymentReceiptField" class="field hidden">صورة إيصال الدفع<input id="paymentReceipt" type="file" accept="image/jpeg,image/png,image/webp"></label></div>
     <div class="checkout-summary"><span>إجمالي الأصناف</span><b id="checkoutTotal">0 ج.م</b></div>
     <small class="delivery-note">رسوم التوصيل يؤكدها الفرع عند مراجعة الطلب.</small>
     <button id="submitOrder" class="checkout-submit">تأكيد الطلب</button>
@@ -31,5 +33,6 @@
 </div>
 <div id="successModal" class="modal hidden"><div class="sheet success-sheet"><div class="success-icon">✓</div><h2>تم إرسال طلبك</h2><p>رقم الطلب: <b id="websiteOrderCode"></b></p><p>الفرع هيراجع الطلب ويؤكده.</p><button class="checkout-submit" data-close="successModal">تمام</button></div></div>
 
-<script src="app.js?v=4.8.0"></script>
+<div id="trackModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="trackModal">×</button><h2>متابعة الطلب</h2><label class="field">رقم الطلب<input id="trackOrderId" inputmode="numeric" placeholder="مثال: WEB-00015"></label><label class="field">رقم الموبايل<input id="trackPhone" inputmode="tel" placeholder="01xxxxxxxxx"></label><button id="trackOrderBtn" class="checkout-submit">عرض حالة الطلب</button><div id="trackResult" class="track-result"></div></div></div>
+<script src="app.js?v=5.0.0"></script>
 </body></html>
