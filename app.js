@@ -75,6 +75,17 @@ function showLocations(){
   const lines=data.branches.map(b=>`<div class="location-card"><b>📍 فرع ${esc(b.name)}</b>${b.address?`<p>${esc(b.address)}</p>`:''}<div class="location-actions">${b.phone?`<a href="tel:${esc(b.phone)}">☎ اتصال</a>`:''}${b.location_url?`<a target="_blank" rel="noopener" href="${esc(b.location_url)}">🗺 فتح اللوكيشن</a>`:''}</div></div>`).join('');
   $('#infoModalTitle').textContent='الفروع والعناوين';$('#infoModalBody').innerHTML=lines||'<div class="empty">لا توجد بيانات فروع</div>';$('#infoModal').classList.remove('hidden');
 }
+async function refreshWebsitePaymentsForBranch(){
+  if(!data.branch)return [];
+  const bid=Number(data.branch);
+  const [methods,rows]=await Promise.all([
+    get('payment_methods?select=id,code,name,kind,active,sort_order&active=eq.true&order=sort_order.asc,id.asc'),
+    get(`branch_payment_methods?select=branch_id,payment_method_id,active,is_default,website_enabled,payment_account,payment_instructions,allow_reference,allow_receipt_upload&branch_id=eq.${bid}&website_enabled=eq.true&active=eq.true`)
+  ]);
+  data.paymentMethods=methods||[];
+  data.branchPaymentMethods=(data.branchPaymentMethods||[]).filter(x=>String(x.branch_id)!==String(bid)).concat(rows||[]);
+  return branchPaymentRows(bid);
+}
 function renderWebsitePayments(){
   const rows=branchPaymentRows(); const box=$('#websitePaymentMethods'); if(!box)return;
   if(!rows.length){data.selectedPayment=null;box.innerHTML='<div class="empty small-empty">لا توجد طرق دفع متاحة حاليًا</div>';return;}
@@ -122,7 +133,7 @@ function chooseBranch(id){
   const b=data.branches.find(x=>String(x.id)===String(id));if(!b)return;if(!branchOpen(b.id))return alert('الفرع لا يستقبل طلبات الموقع حاليًا');
   data.branch=b.id;data.cat=null;data.q='';data.cart=[];
   $('#search').value='';$('#productsView').classList.add('hidden');$('#categoryView').classList.remove('hidden');
-  renderAll();$('#branchGate').classList.add('hidden');renderWebsitePayments();
+  renderAll();$('#branchGate').classList.add('hidden');refreshWebsitePaymentsForBranch().then(()=>renderWebsitePayments()).catch(console.error);
 }
 function changeBranch(id){
   if(String(id)===String(data.branch))return;
@@ -204,7 +215,7 @@ $('#branch').onchange=e=>changeBranch(e.target.value);
 $('#searchBtn').onclick=()=>$('#searchBar').classList.toggle('hidden');$('#closeSearch').onclick=()=>$('#searchBar').classList.add('hidden');
 $('#search').oninput=e=>{data.q=e.target.value.trim();if($('#productsView').classList.contains('hidden')&&data.categories[0])openCategory(data.categories[0].id);renderProducts()};
 $('#addToCart').onclick=addSelected;$('#cartBar').onclick=()=>$('#cartModal').classList.remove('hidden');
-$('#checkoutBtn').onclick=async()=>{if(!data.cart.length)return;try{const latest=await get(`branch_website_settings?select=branch_id,orders_open,orders_paused_until,prep_min,prep_max&branch_id=eq.${Number(data.branch)}`);if(latest?.[0]){data.branchSettings=data.branchSettings.filter(x=>String(x.branch_id)!==String(data.branch));data.branchSettings.push(latest[0])}}catch(e){}if(!branchOpen())return alert('الفرع أوقف استقبال طلبات الموقع حاليًا. اختار فرع تاني أو جرّب بعد شوية.');renderBranch();renderWebsitePayments();if(!branchPaymentRows().length)return alert('لا توجد طرق دفع متاحة على الموقع لهذا الفرع');$('#checkoutTotal').textContent=money(data.cart.reduce((s,x)=>s+x.qty*x.price,0));$('#cartModal').classList.add('hidden');$('#checkoutModal').classList.remove('hidden')};
+$('#checkoutBtn').onclick=async()=>{if(!data.cart.length)return;try{const latest=await get(`branch_website_settings?select=branch_id,orders_open,orders_paused_until,prep_min,prep_max&branch_id=eq.${Number(data.branch)}`);if(latest?.[0]){data.branchSettings=data.branchSettings.filter(x=>String(x.branch_id)!==String(data.branch));data.branchSettings.push(latest[0])}}catch(e){}if(!branchOpen())return alert('الفرع أوقف استقبال طلبات الموقع حاليًا. اختار فرع تاني أو جرّب بعد شوية.');renderBranch();try{await refreshWebsitePaymentsForBranch()}catch(e){console.error(e);return alert('تعذر تحميل طرق الدفع. اعمل تحديث للصفحة وحاول تاني.')}renderWebsitePayments();if(!branchPaymentRows().length)return alert('لا توجد طرق دفع متاحة على الموقع لهذا الفرع');$('#checkoutTotal').textContent=money(data.cart.reduce((s,x)=>s+x.qty*x.price,0));$('#cartModal').classList.add('hidden');$('#checkoutModal').classList.remove('hidden')};
 $('#submitOrder').onclick=async()=>{
   try{const latest=await get(`branch_website_settings?select=branch_id,orders_open,orders_paused_until,prep_min,prep_max&branch_id=eq.${Number(data.branch)}`);if(latest?.[0]){data.branchSettings=data.branchSettings.filter(x=>String(x.branch_id)!==String(data.branch));data.branchSettings.push(latest[0])}}catch(e){}
   if(!branchOpen())return alert('الفرع أوقف استقبال طلبات الموقع حاليًا. لم يتم إرسال الطلب.');
