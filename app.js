@@ -51,7 +51,68 @@ async function load(){
     data.branches=b;data.categories=c;data.products=p;data.branchProducts=bp;data.branchSettings=bs;if(biz?.[0])data.business={...data.business,...biz[0]};if(ws?.[0])data.websiteSettings={...data.websiteSettings,...ws[0]};data.paymentMethods=pay||[];data.branchPaymentMethods=bpay||[];data.variants=v;data.modifiers=m;data.productModifiers=pm;applyBusinessBranding();data.branch=null;renderBranchGate();renderDrawer();
   }catch(e){console.error(e);$('#categoryCards').innerHTML='<div class="empty">تعذر تحميل المنيو. شغّل SQL الخاص بـ Website V3 مرة واحدة.</div>'}
 }
-function renderAll(){renderBranch();renderCategories();renderCart()}
+
+function openDrawer(){renderDrawer();$('#siteDrawer')?.classList.remove('hidden');document.body.classList.add('drawer-open')}
+function closeDrawer(){$('#siteDrawer')?.classList.add('hidden');document.body.classList.remove('drawer-open')}
+function renderDrawer(){
+  const box=$('#drawerItems'); if(!box)return;
+  const w=data.websiteSettings||{};
+  const br=data.branches.find(x=>String(x.id)===String(data.branch))||null;
+  const items=[];
+  if(w.show_contact!==false){
+    if(br?.phone) items.push(`<a class="drawer-link" href="tel:${esc(br.phone)}"><span>☎️</span><div><b>اتصل بنا</b><small>${esc(br.phone)}</small></div></a>`);
+    else items.push(`<button class="drawer-link" data-drawer-contact><span>☎️</span><div><b>اتصل بنا</b><small>بيانات الفروع</small></div></button>`);
+  }
+  if(w.show_locations!==false) items.push(`<button class="drawer-link" data-drawer-locations><span>📍</span><div><b>الفروع والعناوين</b><small>العنوان واللوكيشن</small></div></button>`);
+  if(w.show_track_order!==false) items.push(`<button class="drawer-link" data-drawer-track><span>🔎</span><div><b>متابعة الطلب</b><small>اعرف حالة طلبك</small></div></button>`);
+  if(w.show_cancel_order!==false && w.allow_customer_cancel!==false) items.push(`<button class="drawer-link" data-drawer-track><span>❌</span><div><b>إلغاء الطلب</b><small>متاح قبل استلام الفرع للطلب</small></div></button>`);
+  if(w.show_whatsapp && w.whatsapp_url) items.push(`<a class="drawer-link" target="_blank" rel="noopener" href="${esc(w.whatsapp_url)}"><span>💬</span><div><b>واتساب</b></div></a>`);
+  if(w.show_facebook && w.facebook_url) items.push(`<a class="drawer-link" target="_blank" rel="noopener" href="${esc(w.facebook_url)}"><span>📘</span><div><b>Facebook</b></div></a>`);
+  if(w.show_instagram && w.instagram_url) items.push(`<a class="drawer-link" target="_blank" rel="noopener" href="${esc(w.instagram_url)}"><span>📸</span><div><b>Instagram</b></div></a>`);
+  box.innerHTML=items.join('')||'<div class="drawer-empty">لا توجد عناصر مفعلة حاليًا</div>';
+}
+function showLocations(){
+  const lines=data.branches.map(b=>`<div class="location-card"><b>📍 فرع ${esc(b.name)}</b>${b.address?`<p>${esc(b.address)}</p>`:''}<div class="location-actions">${b.phone?`<a href="tel:${esc(b.phone)}">☎ اتصال</a>`:''}${b.location_url?`<a target="_blank" rel="noopener" href="${esc(b.location_url)}">🗺 فتح اللوكيشن</a>`:''}</div></div>`).join('');
+  $('#infoModalTitle').textContent='الفروع والعناوين';$('#infoModalBody').innerHTML=lines||'<div class="empty">لا توجد بيانات فروع</div>';$('#infoModal').classList.remove('hidden');
+}
+function renderWebsitePayments(){
+  const rows=branchPaymentRows(); const box=$('#websitePaymentMethods'); if(!box)return;
+  if(!rows.length){data.selectedPayment=null;box.innerHTML='<div class="empty small-empty">لا توجد طرق دفع متاحة حاليًا</div>';return;}
+  let selected=rows.find(x=>String(x.code)===String(data.selectedPayment))||rows.find(x=>x.is_default)||rows[0]; data.selectedPayment=selected.code;
+  box.innerHTML=rows.map(x=>`<button type="button" class="payment-choice ${x.code===selected.code?'active':''}" data-pay-code="${esc(x.code)}"><b>${esc(x.name)}</b>${x.payment_account?`<small>${esc(x.payment_account)}</small>`:''}</button>`).join('');
+  renderPaymentDetails();
+}
+function renderPaymentDetails(){
+  const x=branchPaymentRows().find(x=>String(x.code)===String(data.selectedPayment));
+  const inst=$('#paymentInstructions'),rf=$('#paymentReferenceField'),uf=$('#paymentReceiptField');
+  if(!x){inst?.classList.add('hidden');rf?.classList.add('hidden');uf?.classList.add('hidden');return;}
+  const txt=[x.payment_account?`الحساب/الرقم: ${x.payment_account}`:'',x.payment_instructions||''].filter(Boolean).join('\n');
+  if(inst){inst.textContent=txt;inst.classList.toggle('hidden',!txt)}
+  if(rf)rf.classList.toggle('hidden',!(data.websiteSettings.show_payment_reference!==false && x.allow_reference!==false && x.code!=='cash'));
+  if(uf)uf.classList.toggle('hidden',!(data.websiteSettings.show_payment_receipt_upload!==false && x.allow_receipt_upload!==false && x.code!=='cash'));
+}
+async function uploadPaymentReceipt(file){
+  if(!file)return null;
+  const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const path=`receipts/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext||'jpg'}`;
+  const r=await fetch(`${SUPABASE_URL}/storage/v1/object/website-payment-receipts/${path}`,{method:'POST',headers:{...H,'Content-Type':file.type||'image/jpeg','x-upsert':'false'},body:file});
+  if(!r.ok)throw new Error('تعذر رفع صورة الإيصال'); return path;
+}
+function parseWebOrderId(v){const m=String(v||'').match(/(\d+)/);return m?Number(m[1]):0}
+async function trackOrder(){
+  const id=parseWebOrderId($('#trackOrderId').value),phone=$('#trackPhone').value.trim(),out=$('#trackResult');
+  if(!id||phone.replace(/\D/g,'').length<8)return alert('اكتب رقم الطلب ورقم الموبايل');
+  out.innerHTML='جاري التحميل...';
+  try{const r=await rpc('track_website_order',{p_website_order_id:id,p_phone:phone});
+    out.innerHTML=`<div class="track-card"><b>WEB-${String(id).padStart(5,'0')}</b><p>حالة الطلب: <strong>${esc(orderStatusText(r.status))}</strong></p>${data.websiteSettings.show_payment_status!==false?`<p>حالة الدفع: <strong>${esc(paymentStatusText(r.payment_status))}</strong></p>`:''}${r.status==='pending'&&data.websiteSettings.show_cancel_order!==false&&data.websiteSettings.allow_customer_cancel!==false?`<button class="cancel-order-btn" data-cancel-order="${id}">إلغاء الطلب</button>`:''}</div>`;
+  }catch(e){out.innerHTML=`<div class="track-error">${esc(e.message||'تعذر متابعة الطلب')}</div>`}
+}
+async function cancelCustomerOrder(id){
+  const phone=$('#trackPhone').value.trim();if(!confirm('تأكيد إلغاء الطلب؟'))return;
+  try{await rpc('cancel_website_order_customer',{p_website_order_id:Number(id),p_phone:phone});alert('تم إلغاء الطلب');await trackOrder()}catch(e){alert(e.message||'تعذر إلغاء الطلب')}
+}
+
+function renderAll(){renderBranch();renderCategories();renderCart();renderDrawer()}
 function renderBranchGate(){
   const box=$('#branchGateOptions');
   if(!data.branches.length){box.innerHTML='<div class="empty">لا توجد فروع متاحة حاليًا</div>';return;}
@@ -61,7 +122,7 @@ function chooseBranch(id){
   const b=data.branches.find(x=>String(x.id)===String(id));if(!b)return;if(!branchOpen(b.id))return alert('الفرع لا يستقبل طلبات الموقع حاليًا');
   data.branch=b.id;data.cat=null;data.q='';data.cart=[];
   $('#search').value='';$('#productsView').classList.add('hidden');$('#categoryView').classList.remove('hidden');
-  renderAll();$('#branchGate').classList.add('hidden');
+  renderAll();$('#branchGate').classList.add('hidden');renderWebsitePayments();
 }
 function changeBranch(id){
   if(String(id)===String(data.branch))return;
@@ -143,7 +204,7 @@ $('#branch').onchange=e=>changeBranch(e.target.value);
 $('#searchBtn').onclick=()=>$('#searchBar').classList.toggle('hidden');$('#closeSearch').onclick=()=>$('#searchBar').classList.add('hidden');
 $('#search').oninput=e=>{data.q=e.target.value.trim();if($('#productsView').classList.contains('hidden')&&data.categories[0])openCategory(data.categories[0].id);renderProducts()};
 $('#addToCart').onclick=addSelected;$('#cartBar').onclick=()=>$('#cartModal').classList.remove('hidden');
-$('#checkoutBtn').onclick=async()=>{if(!data.cart.length)return;try{const latest=await get(`branch_website_settings?select=branch_id,orders_open,orders_paused_until,prep_min,prep_max&branch_id=eq.${Number(data.branch)}`);if(latest?.[0]){data.branchSettings=data.branchSettings.filter(x=>String(x.branch_id)!==String(data.branch));data.branchSettings.push(latest[0])}}catch(e){}if(!branchOpen())return alert('الفرع أوقف استقبال طلبات الموقع حاليًا. اختار فرع تاني أو جرّب بعد شوية.');renderBranch();$('#checkoutTotal').textContent=money(data.cart.reduce((s,x)=>s+x.qty*x.price,0));$('#cartModal').classList.add('hidden');$('#checkoutModal').classList.remove('hidden')};
+$('#checkoutBtn').onclick=async()=>{if(!data.cart.length)return;try{const latest=await get(`branch_website_settings?select=branch_id,orders_open,orders_paused_until,prep_min,prep_max&branch_id=eq.${Number(data.branch)}`);if(latest?.[0]){data.branchSettings=data.branchSettings.filter(x=>String(x.branch_id)!==String(data.branch));data.branchSettings.push(latest[0])}}catch(e){}if(!branchOpen())return alert('الفرع أوقف استقبال طلبات الموقع حاليًا. اختار فرع تاني أو جرّب بعد شوية.');renderBranch();renderWebsitePayments();if(!branchPaymentRows().length)return alert('لا توجد طرق دفع متاحة على الموقع لهذا الفرع');$('#checkoutTotal').textContent=money(data.cart.reduce((s,x)=>s+x.qty*x.price,0));$('#cartModal').classList.add('hidden');$('#checkoutModal').classList.remove('hidden')};
 $('#submitOrder').onclick=async()=>{
   try{const latest=await get(`branch_website_settings?select=branch_id,orders_open,orders_paused_until,prep_min,prep_max&branch_id=eq.${Number(data.branch)}`);if(latest?.[0]){data.branchSettings=data.branchSettings.filter(x=>String(x.branch_id)!==String(data.branch));data.branchSettings.push(latest[0])}}catch(e){}
   if(!branchOpen())return alert('الفرع أوقف استقبال طلبات الموقع حاليًا. لم يتم إرسال الطلب.');
@@ -158,11 +219,25 @@ $('#submitOrder').onclick=async()=>{
       modifiers:(x.extras||[]).map(e=>({modifier_id:e.id})),
       notes:x.notes||''
     }));
-    const d=await rpc('create_website_order',{p_branch_id:Number(data.branch),p_customer_name:name,p_customer_phone:phone,p_customer_address:address,p_customer_notes:notes,p_items:items});
+    const pay=branchPaymentRows().find(x=>String(x.code)===String(data.selectedPayment));if(!pay)throw new Error('اختار طريقة دفع');
+    const receiptFile=$('#paymentReceipt')?.files?.[0]||null;const receiptPath=receiptFile?await uploadPaymentReceipt(receiptFile):null;
+    const reference=$('#paymentReference')?.value?.trim()||null;
+    const d=await rpc('create_website_order',{p_branch_id:Number(data.branch),p_customer_name:name,p_customer_phone:phone,p_customer_address:address,p_customer_notes:notes,p_items:items,p_payment_method_code:pay.code,p_payment_reference:reference,p_payment_receipt_path:receiptPath});
     const orderId=Number(d);
     data.cart=[];renderCart();$('#checkoutModal').classList.add('hidden');$('#websiteOrderCode').textContent='WEB-'+String(orderId).padStart(5,'0');$('#successModal').classList.remove('hidden');
-    $('#customerName').value='';$('#customerPhone').value='';$('#deliveryAddress').value='';$('#orderNotes').value='';
+    $('#customerName').value='';$('#customerPhone').value='';$('#deliveryAddress').value='';$('#orderNotes').value='';if($('#paymentReference'))$('#paymentReference').value='';if($('#paymentReceipt'))$('#paymentReceipt').value='';
   }catch(e){alert(e.message||'تعذر إرسال الطلب')}finally{btn.disabled=false;btn.textContent='تأكيد الطلب'}
 };
+
+$('#menuBtn').onclick=openDrawer;
+document.addEventListener('click',e=>{
+  if(e.target.closest('[data-drawer-close]'))closeDrawer();
+  if(e.target.closest('[data-drawer-track]')){closeDrawer();$('#trackModal').classList.remove('hidden')}
+  if(e.target.closest('[data-drawer-locations]')){closeDrawer();showLocations()}
+  if(e.target.closest('[data-drawer-contact]')){closeDrawer();showLocations()}
+  const pc=e.target.closest('[data-pay-code]');if(pc){data.selectedPayment=pc.dataset.payCode;renderWebsitePayments()}
+  const co=e.target.closest('[data-cancel-order]');if(co)cancelCustomerOrder(co.dataset.cancelOrder);
+});
+$('#trackOrderBtn').onclick=trackOrder;
 load();
 setInterval(()=>{if(data.branches.length){if(!$('#branchGate').classList.contains('hidden'))renderBranchGate();if(data.branch)renderBranch()}},30000);
