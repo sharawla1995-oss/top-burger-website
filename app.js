@@ -26,10 +26,26 @@ async function load(){
       get('modifiers?select=id,name,price,active&active=eq.true&order=id.asc'),
       get('product_modifiers?select=product_id,modifier_id')
     ]);
-    data.branches=b;data.categories=c;data.products=p;data.branchProducts=bp;data.variants=v;data.modifiers=m;data.productModifiers=pm;data.branch=b[0]?.id||null;renderAll();
+    data.branches=b;data.categories=c;data.products=p;data.branchProducts=bp;data.variants=v;data.modifiers=m;data.productModifiers=pm;data.branch=null;renderBranchGate();
   }catch(e){console.error(e);$('#categoryCards').innerHTML='<div class="empty">تعذر تحميل المنيو. شغّل SQL الخاص بـ Website V3 مرة واحدة.</div>'}
 }
 function renderAll(){renderBranch();renderCategories();renderCart()}
+function renderBranchGate(){
+  const box=$('#branchGateOptions');
+  if(!data.branches.length){box.innerHTML='<div class="empty">لا توجد فروع متاحة حاليًا</div>';return;}
+  box.innerHTML=data.branches.map(x=>`<button class="branch-choice" data-choose-branch="${x.id}"><span class="branch-pin">📍</span><b>فرع ${esc(x.name)}</b><small>اطلب من هذا الفرع</small></button>`).join('');
+}
+function chooseBranch(id){
+  const b=data.branches.find(x=>String(x.id)===String(id));if(!b)return;
+  data.branch=b.id;data.cat=null;data.q='';data.cart=[];
+  $('#search').value='';$('#productsView').classList.add('hidden');$('#categoryView').classList.remove('hidden');
+  renderAll();$('#branchGate').classList.add('hidden');
+}
+function changeBranch(id){
+  if(String(id)===String(data.branch))return;
+  if(data.cart.length&&!confirm('تغيير الفرع هيفضي السلة لأن الأسعار والتوافر ممكن يختلفوا بين الفروع. متابعة؟')){renderBranch();return;}
+  chooseBranch(id);
+}
 function renderBranch(){$('#branch').innerHTML=data.branches.map(x=>`<option value="${x.id}" ${String(x.id)===String(data.branch)?'selected':''}>${esc(x.name)}</option>`).join('')}
 function catProducts(c){return data.products.filter(p=>String(p.category_id)===String(c.id)&&available(p))}
 function renderCategories(){$('#categoryCards').innerHTML=data.categories.map(c=>{const ps=catProducts(c),img=ps.find(p=>p.image_url)?.image_url;return `<button class="category-card" data-open-cat="${c.id}">${img?`<img src="${esc(img)}" loading="lazy">`:'<div class="fallback">🍔</div>'}<div class="category-info"><b>${esc(c.name)}</b><small>${ps.length} عناصر</small></div></button>`}).join('')||'<div class="empty">لا توجد تصنيفات متاحة</div>'}
@@ -90,7 +106,7 @@ function renderCart(){
 }
 function qty(key,d){const x=data.cart.find(i=>String(i.key)===String(key));if(!x)return;x.qty+=d;if(x.qty<=0)data.cart=data.cart.filter(i=>i!==x);renderCart()}
 
-document.addEventListener('click',e=>{
+document.addEventListener('click',e=>{if(e.target.closest('[data-choose-branch]')){chooseBranch(e.target.closest('[data-choose-branch]').dataset.chooseBranch);return;}
   const cat=e.target.closest('[data-open-cat]');if(cat)openCategory(cat.dataset.openCat);
   const add=e.target.closest('[data-add]');if(add){e.stopPropagation();openProduct(add.dataset.add)}
   const card=e.target.closest('[data-product]');if(card&&!add)openProduct(card.dataset.product);
@@ -101,7 +117,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('change',e=>{if(e.target.matches('[data-extra]')){const id=String(e.target.dataset.extra);e.target.checked?data.selectedExtras.add(id):data.selectedExtras.delete(id);refreshModalPrice()}});
 
 $('#backBtn').onclick=()=>{$('#productsView').classList.add('hidden');$('#categoryView').classList.remove('hidden');data.q='';$('#search').value=''};
-$('#branch').onchange=e=>{data.branch=e.target.value;renderCategories();if(data.cat)renderProducts()};
+$('#branch').onchange=e=>changeBranch(e.target.value);
 $('#searchBtn').onclick=()=>$('#searchBar').classList.toggle('hidden');$('#closeSearch').onclick=()=>$('#searchBar').classList.add('hidden');
 $('#search').oninput=e=>{data.q=e.target.value.trim();if($('#productsView').classList.contains('hidden')&&data.categories[0])openCategory(data.categories[0].id);renderProducts()};
 $('#addToCart').onclick=addSelected;$('#cartBar').onclick=()=>$('#cartModal').classList.remove('hidden');

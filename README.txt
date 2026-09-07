@@ -1,5 +1,5 @@
-Top Burger Website V4.1 FIXED
-- Fixes blank menu/branch selector by loading app.js after all page elements.
-- Uses installed RPC create_website_order.
-- Sends quantity/modifiers in the schema expected by the installed function.
-- No SQL required for this website patch.
+Top Burger Website V4.2 - Branch Choice
+- Customer chooses branch before viewing menu.
+- Menu availability and branch price_override use selected branch.
+- Order is submitted to selected branch.
+- Changing branch clears cart after confirmation to prevent price/availability mismatch.
