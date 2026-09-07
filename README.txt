@@ -1,5 +1,7 @@
-Top Burger Website V4.3 - Branch Choice
-- Customer chooses branch before viewing menu.
-- Menu availability and branch price_override use selected branch.
-- Order is submitted to selected branch.
-- Changing branch clears cart after confirmation to prevent price/availability mismatch.
+Top Burger Website V4.4
+- اختيار الفرع كما في V4.3.
+- يعرض حالة استقبال طلبات كل فرع قبل الاختيار.
+- الفرع الموقوف لا يمكن اختياره.
+- يعرض مدة التجهيز لكل فرع.
+- يراجع حالة الفرع مرة أخرى قبل فتح التأكيد وقبل إرسال الطلب.
+- Supabase يمنع الإدخال فعليًا عند إيقاف الفرع عبر trigger الخاص بـ V9.2.8.

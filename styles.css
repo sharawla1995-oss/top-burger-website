@@ -10,3 +10,6 @@
 .branch-gate-logo{width:92px;height:78px;margin:0 auto 18px;background:#b51f2b;color:#fff;border-radius:14px;display:flex;flex-direction:column;justify-content:center;align-items:center;line-height:1;box-shadow:0 8px 22px #b51f2b55}.branch-gate-logo span{font-size:14px;font-weight:900}.branch-gate-logo b{font-size:19px;margin-top:5px}
 .branch-gate-card h1{margin:4px 0 8px;font-size:28px}.branch-gate-card>p{margin:0 auto 22px;color:#666;line-height:1.7;max-width:390px}
 .branch-gate-options{display:grid;gap:12px}.branch-choice{width:100%;border:2px solid #f1ded9;background:#fff8f5;border-radius:18px;padding:15px 16px;display:grid;grid-template-columns:42px 1fr;grid-template-rows:auto auto;text-align:right;align-items:center;font-family:inherit;cursor:pointer}.branch-choice:active{transform:scale(.985)}.branch-pin{grid-row:1/3;font-size:27px}.branch-choice b{font-size:19px;color:#b51f2b}.branch-choice small{margin-top:4px;color:#777}.branch-loading{padding:20px;color:#777}
+
+/* Website V4.4 — branch open/closed + prep time */
+.branch-choice.closed{opacity:.58;background:#f3f3f3;border-color:#ddd;cursor:not-allowed}.branch-choice.closed b{color:#777}.branch-choice small{line-height:1.45}.branch-info{display:block;margin-top:4px;font-size:11px!important;color:#fff!important;opacity:.95}.welcome div{min-width:0}.delivery-note{line-height:1.6}
