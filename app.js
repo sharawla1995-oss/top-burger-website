@@ -30,7 +30,7 @@ function productDisplayPrice(p){const vs=productVariants(p);if(!vs.length)return
 async function load(){
   try{
     const [b,c,p,bp,bs,biz,v,m,pm]=await Promise.all([
-      get('branches?select=id,name&active=eq.true&website_visible=eq.true&order=sort_order.asc,id.asc'),
+      get('branches?select=id,name,phone,address&active=eq.true&website_visible=eq.true&order=sort_order.asc,id.asc'),
       get('categories?select=id,name,active,website_visible,website_sort_order,sort_order&active=eq.true&website_visible=eq.true&order=website_sort_order.asc,sort_order.asc,id.asc'),
       get('products?select=id,category_id,name,price,image_url,active,website_visible,website_sort_order,allow_extras,allow_removals,allow_item_notes,removable_components&active=eq.true&website_visible=eq.true&order=website_sort_order.asc,id.asc'),
       get('branch_products?select=branch_id,product_id,active,price_override,website_paused_until'),
@@ -47,7 +47,7 @@ function renderAll(){renderBranch();renderCategories();renderCart()}
 function renderBranchGate(){
   const box=$('#branchGateOptions');
   if(!data.branches.length){box.innerHTML='<div class="empty">لا توجد فروع متاحة حاليًا</div>';return;}
-  box.innerHTML=data.branches.map(x=>{const open=branchOpen(x.id);return `<button class="branch-choice ${open?'':'closed'}" data-choose-branch="${x.id}" ${open?'':'disabled'}><span class="branch-pin">📍</span><b>فرع ${esc(x.name)}</b><small>${esc(branchStatusText(x.id))}</small></button>`}).join('');
+  box.innerHTML=data.branches.map(x=>{const open=branchOpen(x.id),contact=[x.address,x.phone].filter(Boolean).join(' • ');return `<button class="branch-choice ${open?'':'closed'}" data-choose-branch="${x.id}" ${open?'':'disabled'}><span class="branch-pin">📍</span><b>فرع ${esc(x.name)}</b><small>${esc(branchStatusText(x.id))}</small>${contact?`<small class="branch-contact-small">${esc(contact)}</small>`:''}</button>`}).join('');
 }
 function chooseBranch(id){
   const b=data.branches.find(x=>String(x.id)===String(id));if(!b)return;if(!branchOpen(b.id))return alert('الفرع لا يستقبل طلبات الموقع حاليًا');
@@ -60,7 +60,7 @@ function changeBranch(id){
   if(data.cart.length&&!confirm('تغيير الفرع هيفضي السلة لأن الأسعار والتوافر ممكن يختلفوا بين الفروع. متابعة؟')){renderBranch();return;}
   chooseBranch(id);
 }
-function renderBranch(){$('#branch').innerHTML=data.branches.map(x=>`<option value="${x.id}" ${String(x.id)===String(data.branch)?'selected':''} ${branchOpen(x.id)?'':'disabled'}>${esc(x.name)}${branchOpen(x.id)?'':' — مغلق'}</option>`).join('');const info=$('#branchInfo');if(info)info.textContent=branchStatusText(data.branch);const note=$('#deliveryNote');if(note)note.textContent=`مدة التجهيز المتوقعة: ${prepText(data.branch)}. رسوم التوصيل يؤكدها الفرع عند مراجعة الطلب.`}
+function renderBranch(){$('#branch').innerHTML=data.branches.map(x=>`<option value="${x.id}" ${String(x.id)===String(data.branch)?'selected':''} ${branchOpen(x.id)?'':'disabled'}>${esc(x.name)}${branchOpen(x.id)?'':' — مغلق'}</option>`).join('');const br=data.branches.find(x=>String(x.id)===String(data.branch));const info=$('#branchInfo');if(info)info.textContent=branchStatusText(data.branch);const contact=$('#branchContact');if(contact)contact.innerHTML=br?[br.address?`<span>📍 ${esc(br.address)}</span>`:'',br.phone?`<a href="tel:${esc(br.phone)}">☎ ${esc(br.phone)}</a>`:''].filter(Boolean).join(''):'';const note=$('#deliveryNote');if(note)note.textContent=`مدة التجهيز المتوقعة: ${prepText(data.branch)}. رسوم التوصيل يؤكدها الفرع عند مراجعة الطلب.`}
 function catProducts(c){return data.products.filter(p=>String(p.category_id)===String(c.id)&&available(p))}
 function renderCategories(){$('#categoryCards').innerHTML=data.categories.map(c=>{const ps=catProducts(c),img=ps.find(p=>p.image_url)?.image_url;return `<button class="category-card" data-open-cat="${c.id}">${img?`<img src="${esc(img)}" loading="lazy">`:'<div class="fallback">🍔</div>'}<div class="category-info"><b>${esc(c.name)}</b><small>${ps.length} عناصر</small></div></button>`}).join('')||'<div class="empty">لا توجد تصنيفات متاحة</div>'}
 function openCategory(id){data.cat=String(id);$('#categoryView').classList.add('hidden');$('#productsView').classList.remove('hidden');renderProducts();scrollTo({top:0,behavior:'smooth'})}
