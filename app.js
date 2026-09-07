@@ -22,7 +22,7 @@ function productDisplayPrice(p){const vs=productVariants(p);if(!vs.length)return
 async function load(){
   try{
     const [b,c,p,bp,bs,v,m,pm]=await Promise.all([
-      get('branches?select=id,name&order=id'),
+      get('branches?select=id,name&active=eq.true&website_visible=eq.true&order=sort_order.asc,id.asc'),
       get('categories?select=id,name,active,website_visible,website_sort_order,sort_order&active=eq.true&website_visible=eq.true&order=website_sort_order.asc,sort_order.asc,id.asc'),
       get('products?select=id,category_id,name,price,image_url,active,website_visible,website_sort_order,allow_extras,allow_removals,allow_item_notes,removable_components&active=eq.true&website_visible=eq.true&order=website_sort_order.asc,id.asc'),
       get('branch_products?select=branch_id,product_id,active,price_override,website_paused_until'),
