@@ -111,9 +111,16 @@ $('#submitOrder').onclick=async()=>{
   if(name.length<2)return alert('اكتب اسم العميل');if(phone.replace(/\D/g,'').length<8)return alert('اكتب رقم موبايل صحيح');if(address.length<5)return alert('اكتب عنوان التوصيل');
   const btn=$('#submitOrder');btn.disabled=true;btn.textContent='جاري إرسال الطلب...';
   try{
-    const items=data.cart.map(x=>({product_id:x.product_id,variant_id:x.variant_id,qty:x.qty,modifier_ids:(x.extras||[]).map(e=>e.id),notes:x.notes||''}));
-    const d=await rpc('submit_website_order',{p_branch_id:Number(data.branch),p_customer_name:name,p_customer_phone:phone,p_delivery_address:address,p_notes:notes,p_items:items});
-    data.cart=[];renderCart();$('#checkoutModal').classList.add('hidden');$('#websiteOrderCode').textContent=d.code||('WEB-'+d.id);$('#successModal').classList.remove('hidden');
+    const items=data.cart.map(x=>({
+      product_id:x.product_id,
+      variant_id:x.variant_id,
+      quantity:x.qty,
+      modifiers:(x.extras||[]).map(e=>({modifier_id:e.id})),
+      notes:x.notes||''
+    }));
+    const d=await rpc('create_website_order',{p_branch_id:Number(data.branch),p_customer_name:name,p_customer_phone:phone,p_customer_address:address,p_customer_notes:notes,p_items:items});
+    const orderId=Number(d);
+    data.cart=[];renderCart();$('#checkoutModal').classList.add('hidden');$('#websiteOrderCode').textContent='WEB-'+String(orderId).padStart(5,'0');$('#successModal').classList.remove('hidden');
     $('#customerName').value='';$('#customerPhone').value='';$('#deliveryAddress').value='';$('#orderNotes').value='';
   }catch(e){alert(e.message||'تعذر إرسال الطلب')}finally{btn.disabled=false;btn.textContent='تأكيد الطلب'}
 };
