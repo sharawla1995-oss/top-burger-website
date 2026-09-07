@@ -1,4 +1,4 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#b51f2b"><title>اطلب أونلاين</title><link rel="stylesheet" href="styles.css?v=5.0.2"></head><body>
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#b51f2b"><title>اطلب أونلاين</title><link rel="stylesheet" href="styles.css?v=5.2.0"></head><body>
 
 <div id="branchGate" class="branch-gate">
   <div class="branch-gate-card">
@@ -25,8 +25,8 @@
     <label class="field">رقم الموبايل<input id="customerPhone" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></label>
     <label class="field" id="deliveryAddressField">العنوان<textarea id="deliveryAddress" rows="3" placeholder="المنطقة، الشارع، رقم العمارة... "></textarea></label>
     <label class="field">ملاحظات الطلب<textarea id="orderNotes" rows="2" placeholder="اختياري"></textarea></label>
-    <div id="websitePaymentBox" class="payment-box"><h3>طريقة الدفع</h3><div id="websitePaymentMethods" class="payment-methods"></div><div id="paymentInstructions" class="payment-instructions hidden"></div><label id="paymentReferenceField" class="field hidden">رقم مرجع التحويل<input id="paymentReference" placeholder="اختياري"></label><label id="paymentReceiptField" class="field hidden">صورة إيصال الدفع<input id="paymentReceipt" type="file" accept="image/jpeg,image/png,image/webp"></label></div>
-    <div class="checkout-summary"><span>إجمالي الأصناف</span><b id="checkoutTotal">0 ج.م</b></div>
+    <div id="websitePromoBox" class="website-promo-box"><h3>🎟️ عندك برومو كود؟</h3><div class="promo-entry"><input id="websitePromoCode" placeholder="اكتب الكود"><button id="applyWebsitePromo" type="button">تطبيق</button></div><div id="websitePromoResult" class="promo-result hidden"></div></div><div id="websitePaymentBox" class="payment-box"><h3>طريقة الدفع</h3><div id="websitePaymentMethods" class="payment-methods"></div><div id="paymentInstructions" class="payment-instructions hidden"></div><label id="paymentReferenceField" class="field hidden">رقم مرجع التحويل<input id="paymentReference" placeholder="اختياري"></label><label id="paymentReceiptField" class="field hidden">صورة إيصال الدفع<input id="paymentReceipt" type="file" accept="image/jpeg,image/png,image/webp"></label></div>
+    <div class="checkout-summary"><span>إجمالي الأصناف</span><b id="checkoutSubtotal">0 ج.م</b></div><div id="checkoutPromoLine" class="checkout-summary promo-summary hidden"><span>خصم البرومو</span><b id="checkoutPromoDiscount">- 0 ج.م</b></div><div class="checkout-summary checkout-grand"><span>المطلوب</span><b id="checkoutTotal">0 ج.م</b></div>
     <small class="delivery-note" id="checkoutFulfillmentNote">رسوم التوصيل يؤكدها الفرع عند مراجعة الطلب.</small>
     <button id="submitOrder" class="checkout-submit">تأكيد الطلب</button>
   </div>
@@ -36,5 +36,5 @@
 <div id="trackModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="trackModal">×</button><h2>متابعة الطلب</h2><label class="field">رقم الطلب<input id="trackOrderId" inputmode="numeric" placeholder="مثال: WEB-00015"></label><label class="field">رقم الموبايل<input id="trackPhone" inputmode="tel" placeholder="01xxxxxxxxx"></label><button id="trackOrderBtn" class="checkout-submit">عرض حالة الطلب</button><div id="trackResult" class="track-result"></div></div></div>
 
 <div id="infoModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="infoModal">×</button><h2 id="infoModalTitle"></h2><div id="infoModalBody"></div></div></div>
-<script src="app.js?v=5.1.0"></script>
+<script src="app.js?v=5.2.0"></script>
 </body></html>
