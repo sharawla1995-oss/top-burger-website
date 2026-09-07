@@ -2,12 +2,20 @@ const SUPABASE_URL='https://kzokretuuigjhxjzdlmk.supabase.co';
 const KEY='sb_publishable_m8gAAZTKnOvCSWNvQijIXw_H1obE9vg';
 const H={apikey:KEY,Authorization:`Bearer ${KEY}`};
 const $=s=>document.querySelector(s);
-let data={branches:[],categories:[],products:[],branchProducts:[],branchSettings:[],variants:[],modifiers:[],productModifiers:[],branch:null,cat:null,q:'',cart:[],selected:null,selectedVariant:null,selectedExtras:new Set()};
+let data={branches:[],categories:[],products:[],branchProducts:[],branchSettings:[],variants:[],modifiers:[],productModifiers:[],business:{business_name:'Top Burger',tagline:'🔥 طعم يستاهل التجربة',logo_url:'',currency_symbol:'ج.م',primary_color:'#b51f2b',accent_color:'#f0643d'},branch:null,cat:null,q:'',cart:[],selected:null,selectedVariant:null,selectedExtras:new Set()};
 
 async function get(path){const r=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{headers:H});if(!r.ok)throw new Error(await r.text());return r.json()}
 async function rpc(name,body){const r=await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`,{method:'POST',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify(body)});let d=null;try{d=await r.json()}catch{}if(!r.ok)throw new Error(d?.message||'تعذر إرسال الطلب');return d}
 const esc=(v='')=>String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-function money(n){return `${Number(n||0).toFixed(0)} ج.م`}
+function money(n){return `${Number(n||0).toFixed(0)} ${data.business?.currency_symbol||'ج.م'}`}
+function applyBusinessBranding(){
+  const b=data.business||{};document.title=`${b.business_name||'Top Burger'} | اطلب أونلاين`;
+  const root=document.documentElement;if(b.primary_color)root.style.setProperty('--brand-primary',b.primary_color);if(b.accent_color)root.style.setProperty('--brand-accent',b.accent_color);
+  document.querySelectorAll('[data-business-name]').forEach(x=>x.textContent=b.business_name||'Top Burger');
+  document.querySelectorAll('[data-business-tagline]').forEach(x=>x.textContent=b.tagline||'');
+  document.querySelectorAll('[data-business-logo]').forEach(x=>{if(b.logo_url){x.src=b.logo_url;x.classList.remove('hidden')}else{x.classList.add('hidden')}});
+  document.querySelectorAll('[data-business-logo-fallback]').forEach(x=>x.classList.toggle('hidden',!!b.logo_url));
+}
 function branchRow(p){return data.branchProducts.find(x=>String(x.branch_id)===String(data.branch)&&String(x.product_id)===String(p.id))}
 function priceFor(p){const o=branchRow(p);return Number(o?.price_override??p.price??0)}
 function available(p){const o=branchRow(p);if(!o)return true;if(o.active===false)return false;const u=o.website_paused_until?new Date(o.website_paused_until):null;return !(u&&!Number.isNaN(u.getTime())&&u.getTime()>Date.now())}
@@ -21,17 +29,18 @@ function productDisplayPrice(p){const vs=productVariants(p);if(!vs.length)return
 
 async function load(){
   try{
-    const [b,c,p,bp,bs,v,m,pm]=await Promise.all([
+    const [b,c,p,bp,bs,biz,v,m,pm]=await Promise.all([
       get('branches?select=id,name&active=eq.true&website_visible=eq.true&order=sort_order.asc,id.asc'),
       get('categories?select=id,name,active,website_visible,website_sort_order,sort_order&active=eq.true&website_visible=eq.true&order=website_sort_order.asc,sort_order.asc,id.asc'),
       get('products?select=id,category_id,name,price,image_url,active,website_visible,website_sort_order,allow_extras,allow_removals,allow_item_notes,removable_components&active=eq.true&website_visible=eq.true&order=website_sort_order.asc,id.asc'),
       get('branch_products?select=branch_id,product_id,active,price_override,website_paused_until'),
       get('branch_website_settings?select=branch_id,orders_open,orders_paused_until,prep_min,prep_max').catch(()=>[]),
+      get('business_settings?select=*&id=eq.1&limit=1').catch(()=>[]),
       get('product_variants?select=id,product_id,name,price,sort_order,active&active=eq.true&order=sort_order.asc,id.asc'),
       get('modifiers?select=id,name,price,active&active=eq.true&order=id.asc'),
       get('product_modifiers?select=product_id,modifier_id')
     ]);
-    data.branches=b;data.categories=c;data.products=p;data.branchProducts=bp;data.branchSettings=bs;data.variants=v;data.modifiers=m;data.productModifiers=pm;data.branch=null;renderBranchGate();
+    data.branches=b;data.categories=c;data.products=p;data.branchProducts=bp;data.branchSettings=bs;if(biz?.[0])data.business={...data.business,...biz[0]};data.variants=v;data.modifiers=m;data.productModifiers=pm;applyBusinessBranding();data.branch=null;renderBranchGate();
   }catch(e){console.error(e);$('#categoryCards').innerHTML='<div class="empty">تعذر تحميل المنيو. شغّل SQL الخاص بـ Website V3 مرة واحدة.</div>'}
 }
 function renderAll(){renderBranch();renderCategories();renderCart()}
