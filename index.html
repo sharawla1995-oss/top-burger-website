@@ -5,7 +5,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Top Burger">
-<title>Top Burger</title><link rel="stylesheet" href="styles.css?v=5.2.0"></head><body>
+<title>Top Burger</title><link rel="stylesheet" href="styles.css?v=5.4.0"></head><body>
 
 <div id="branchGate" class="branch-gate">
   <div class="branch-gate-card">
@@ -40,14 +40,14 @@
 </div>
 <div id="successModal" class="modal hidden"><div class="sheet success-sheet"><div class="success-icon">✓</div><h2>تم إرسال طلبك</h2><p>رقم الطلب: <b id="websiteOrderCode"></b></p><p>الفرع هيراجع الطلب ويؤكده.</p><button class="checkout-submit" data-close="successModal">تمام</button></div></div>
 
-<div id="trackModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="trackModal">×</button><h2>متابعة الطلب</h2><label class="field">رقم الطلب<input id="trackOrderId" inputmode="numeric" placeholder="مثال: WEB-00015"></label><label class="field">رقم الموبايل<input id="trackPhone" inputmode="tel" placeholder="01xxxxxxxxx"></label><button id="trackOrderBtn" class="checkout-submit">عرض حالة الطلب</button><div id="trackResult" class="track-result"></div></div></div>
+<div id="trackModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="trackModal">×</button><h2 id="trackModalTitle">متابعة الطلب</h2><p class="track-help">اكتب رقم الموبايل المستخدم في الطلب.</p><label class="field">رقم الموبايل<input id="trackPhone" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></label><button id="trackOrderBtn" class="checkout-submit">عرض طلباتي</button><div id="trackResult" class="track-result"></div></div></div>
 
 <div id="infoModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="infoModal">×</button><h2 id="infoModalTitle"></h2><div id="infoModalBody"></div></div></div>
-<script src="app.js?v=5.2.0"></script>
+<script src="app.js?v=5.4.0"></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./sw.js').catch(function (err) {
+    navigator.serviceWorker.register('./sw.js?v=5.4.0', {updateViaCache:'none'}).catch(function (err) {
       console.warn('Service Worker registration failed:', err);
     });
   });

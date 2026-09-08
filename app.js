@@ -11,7 +11,7 @@ function money(n){return `${Number(n||0).toFixed(0)} ${data.business?.currency_s
 function applyWebsiteTheme(){const w=data.websiteSettings||{};const root=document.documentElement;root.style.setProperty('--site-bg',w.page_background||'#b51f2b');root.style.setProperty('--site-surface',w.surface_color||'#fff');root.style.setProperty('--site-text',w.text_color||'#171717');root.style.setProperty('--site-radius',`${Number(w.card_radius||22)}px`);document.querySelector('meta[name="theme-color"]')?.setAttribute('content',w.page_background||data.business?.primary_color||'#b51f2b')}
 function branchPaymentRows(branchId=data.branch){return data.branchPaymentMethods.filter(x=>String(x.branch_id)===String(branchId)&&x.active!==false&&x.website_enabled===true).map(r=>{const m=data.paymentMethods.find(x=>String(x.id)===String(r.payment_method_id));return m?{...m,...r,method_id:m.id,code:m.code,name:m.name}:null}).filter(Boolean).sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0)||Number(a.id)-Number(b.id))}
 function paymentStatusText(v){return ({unpaid:'غير مدفوع',proof_submitted:'تم رفع إثبات الدفع — بانتظار المراجعة',confirmed:'تم تأكيد الدفع',rejected:'إثبات الدفع مرفوض'}[v]||'غير مدفوع')}
-function orderStatusText(v){return ({pending:'تم إرسال الطلب للفرع',accepted:'تم استلام الطلب',new:'تم استلام الطلب',preparing:'جاري التجهيز',ready:'الطلب جاهز',out_for_delivery:'خرج للتوصيل',delivered:'تم التسليم',completed:'مكتمل',rejected:'ملغي / مرفوض',cancelled:'ملغي'}[v]||v||'')}
+function orderStatusText(v,type){const pickup=type==='pickup';return ({pending:'تم إرسال الطلب للفرع',accepted:'تم استلام الطلب',new:'تم استلام الطلب',preparing:'جاري التجهيز',ready:pickup?'جاهز للاستلام':'تم التجهيز',out_for_delivery:'خرج مع المندوب',delivered:'تم التسليم',completed:pickup?'تم تسليم الطلب للعميل':'مكتمل',rejected:'ملغي / مرفوض',cancelled:'ملغي'}[v]||v||'')}
 
 function applyBusinessBranding(){
   const b=data.business||{};document.title=`${b.business_name||'Top Burger'} | اطلب أونلاين`;
@@ -65,8 +65,8 @@ function renderDrawer(){
     else items.push(`<button class="drawer-link" data-drawer-contact><span>☎️</span><div><b>اتصل بنا</b><small>بيانات الفروع</small></div></button>`);
   }
   if(w.show_locations!==false) items.push(`<button class="drawer-link" data-drawer-locations><span>📍</span><div><b>الفروع والعناوين</b><small>العنوان واللوكيشن</small></div></button>`);
-  if(w.show_track_order!==false) items.push(`<button class="drawer-link" data-drawer-track><span>🔎</span><div><b>متابعة الطلب</b><small>اعرف حالة طلبك</small></div></button>`);
-  if(w.show_cancel_order!==false && w.allow_customer_cancel!==false) items.push(`<button class="drawer-link" data-drawer-track><span>❌</span><div><b>إلغاء الطلب</b><small>متاح قبل استلام الفرع للطلب</small></div></button>`);
+  if(w.show_track_order!==false) items.push(`<button class="drawer-link" data-drawer-track><span>🔎</span><div><b>متابعة الطلب</b><small>اعرف حالة طلبك برقم الموبايل</small></div></button>`);
+  if(w.show_cancel_order!==false && w.allow_customer_cancel!==false) items.push(`<button class="drawer-link" data-drawer-cancel><span>❌</span><div><b>إلغاء الطلب</b><small>متاح قبل بدء التجهيز</small></div></button>`);
   if(w.show_whatsapp && w.whatsapp_url) items.push(`<a class="drawer-link" target="_blank" rel="noopener" href="${esc(w.whatsapp_url)}"><span>💬</span><div><b>واتساب</b></div></a>`);
   if(w.show_facebook && w.facebook_url) items.push(`<a class="drawer-link" target="_blank" rel="noopener" href="${esc(w.facebook_url)}"><span>📘</span><div><b>Facebook</b></div></a>`);
   if(w.show_instagram && w.instagram_url) items.push(`<a class="drawer-link" target="_blank" rel="noopener" href="${esc(w.instagram_url)}"><span>📸</span><div><b>Instagram</b></div></a>`);
@@ -110,18 +110,53 @@ async function uploadPaymentReceipt(file){
   const r=await fetch(`${SUPABASE_URL}/storage/v1/object/website-payment-receipts/${path}`,{method:'POST',headers:{...H,'Content-Type':file.type||'image/jpeg','x-upsert':'false'},body:file});
   if(!r.ok)throw new Error('تعذر رفع صورة الإيصال'); return path;
 }
-function parseWebOrderId(v){const m=String(v||'').match(/(\d+)/);return m?Number(m[1]):0}
+let trackMode='track';
+function openTrackModal(mode='track'){
+  trackMode=mode==='cancel'?'cancel':'track';
+  const title=$('#trackModalTitle'),btn=$('#trackOrderBtn'),out=$('#trackResult');
+  if(title)title.textContent=trackMode==='cancel'?'إلغاء الطلب':'متابعة الطلب';
+  if(btn)btn.textContent=trackMode==='cancel'?'عرض الطلبات المتاح إلغاؤها':'عرض طلباتي';
+  if(out)out.innerHTML='';
+  $('#trackModal')?.classList.remove('hidden');
+  setTimeout(()=>$('#trackPhone')?.focus(),50);
+}
+function trackOrderCard(r){
+  const canCancel=!!r.can_cancel && data.websiteSettings.show_cancel_order!==false && data.websiteSettings.allow_customer_cancel!==false;
+  const cancelAction=trackMode==='cancel'
+    ? (canCancel?`<button class="cancel-order-btn" data-cancel-order="${Number(r.id)}">إلغاء هذا الطلب</button>`:'')
+    : (canCancel?`<button class="cancel-order-btn secondary-cancel" data-cancel-order="${Number(r.id)}">إلغاء الطلب</button>`:'');
+  return `<div class="track-card">
+    <div class="track-card-head"><b>WEB-${String(r.id).padStart(5,'0')}</b><span>${esc(r.branch_name||'')}</span></div>
+    <p><b>${r.order_type==='pickup'?'🏪 استلام من الفرع':'🛵 دليفري'}</b> • ${new Date(r.created_at).toLocaleString('ar-EG')}</p>
+    <p>حالة الطلب: <strong>${esc(orderStatusText(r.status,r.order_type))}</strong></p>
+    ${data.websiteSettings.show_payment_status!==false?`<p>حالة الدفع: <strong>${esc(paymentStatusText(r.payment_status))}</strong></p>`:''}
+    <p>الإجمالي: <strong>${money(r.total)}</strong></p>
+    ${cancelAction}
+  </div>`;
+}
 async function trackOrder(){
-  const id=parseWebOrderId($('#trackOrderId').value),phone=$('#trackPhone').value.trim(),out=$('#trackResult');
-  if(!id||phone.replace(/\D/g,'').length<8)return alert('اكتب رقم الطلب ورقم الموبايل');
+  const phone=$('#trackPhone').value.trim(),out=$('#trackResult');
+  if(phone.replace(/\D/g,'').length<10)return alert('اكتب رقم الموبايل المستخدم في الطلب');
   out.innerHTML='جاري التحميل...';
-  try{const r=await rpc('track_website_order',{p_website_order_id:id,p_phone:phone});
-    out.innerHTML=`<div class="track-card"><b>WEB-${String(id).padStart(5,'0')}</b><p>حالة الطلب: <strong>${esc(orderStatusText(r.status))}</strong></p>${data.websiteSettings.show_payment_status!==false?`<p>حالة الدفع: <strong>${esc(paymentStatusText(r.payment_status))}</strong></p>`:''}${r.status==='pending'&&data.websiteSettings.show_cancel_order!==false&&data.websiteSettings.allow_customer_cancel!==false?`<button class="cancel-order-btn" data-cancel-order="${id}">إلغاء الطلب</button>`:''}</div>`;
-  }catch(e){out.innerHTML=`<div class="track-error">${esc(e.message||'تعذر متابعة الطلب')}</div>`}
+  try{
+    const rows=await rpc('track_website_orders',{p_phone:phone});
+    const list=Array.isArray(rows)?rows:[];
+    const visible=trackMode==='cancel'?list.filter(x=>x.can_cancel):list;
+    if(!visible.length){
+      out.innerHTML=`<div class="small-empty">${trackMode==='cancel'?'لا توجد طلبات متاح إلغاؤها لهذا الرقم. الإلغاء متاح فقط قبل بدء التجهيز.':'لا توجد طلبات بهذا الرقم.'}</div>`;
+      return;
+    }
+    out.innerHTML=visible.map(trackOrderCard).join('');
+  }catch(e){out.innerHTML=`<div class="track-error">${esc(e.message||'تعذر تحميل الطلبات')}</div>`}
 }
 async function cancelCustomerOrder(id){
-  const phone=$('#trackPhone').value.trim();if(!confirm('تأكيد إلغاء الطلب؟'))return;
-  try{await rpc('cancel_website_order_customer',{p_website_order_id:Number(id),p_phone:phone});alert('تم إلغاء الطلب');await trackOrder()}catch(e){alert(e.message||'تعذر إلغاء الطلب')}
+  const phone=$('#trackPhone').value.trim();
+  if(!confirm('تأكيد إلغاء هذا الطلب؟\nبعد بدء التجهيز لا يمكن الإلغاء من الموقع.'))return;
+  try{
+    await rpc('cancel_website_order_customer',{p_website_order_id:Number(id),p_phone:phone});
+    alert('تم إلغاء الطلب');
+    await trackOrder();
+  }catch(e){alert(e.message||'تعذر إلغاء الطلب')}
 }
 
 function renderAll(){renderBranch();renderCategories();renderCart();renderDrawer()}
@@ -254,7 +289,8 @@ $('#submitOrder').onclick=async()=>{
 if($('#applyWebsitePromo'))$('#applyWebsitePromo').onclick=applyWebsitePromo;$('#menuBtn').onclick=openDrawer;
 document.addEventListener('click',e=>{
   if(e.target.closest('[data-drawer-close]'))closeDrawer();
-  if(e.target.closest('[data-drawer-track]')){closeDrawer();$('#trackModal').classList.remove('hidden')}
+  if(e.target.closest('[data-drawer-track]')){closeDrawer();openTrackModal('track')}
+  if(e.target.closest('[data-drawer-cancel]')){closeDrawer();openTrackModal('cancel')}
   if(e.target.closest('[data-drawer-locations]')){closeDrawer();showLocations()}
   if(e.target.closest('[data-drawer-contact]')){closeDrawer();showLocations()}
   const pc=e.target.closest('[data-pay-code]');if(pc){data.selectedPayment=pc.dataset.payCode;renderWebsitePayments()}
