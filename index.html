@@ -9,13 +9,13 @@
 
 <div id="branchGate" class="branch-gate">
   <div class="branch-gate-card">
-    <div class="branch-gate-logo"><img data-business-logo class="business-logo-img hidden" alt=""><div data-business-logo-fallback><b data-business-name>Top Burger</b></div></div>
+    <div class="branch-gate-logo"><img src="top-burger-logo.jpg?v=6.0.1" class="v6-static-logo" alt="Top Burger"></div>
     <h1>اختار الفرع</h1>
     <p>اختار الفرع اللي هتطلب منه علشان نعرض لك التوافر والأسعار الخاصة بيه.</p>
     <div id="branchGateOptions" class="branch-gate-options"><div class="branch-loading">جاري تحميل الفروع...</div></div>
   </div>
 </div>
-<div class="topline"></div><header class="header"><button id="searchBtn" class="circle">⌕</button><div class="brand"><div class="logo"><img data-business-logo class="business-logo-img hidden" alt=""><div data-business-logo-fallback><b data-business-name>Top Burger</b></div></div></div><button id="menuBtn" class="circle">☰</button></header>
+<div class="topline"></div><header class="header"><button id="searchBtn" class="circle">⌕</button><div class="brand"><div class="logo"><img src="top-burger-logo.jpg?v=6.0.1" class="v6-header-logo" alt="Top Burger"></div></div><button id="menuBtn" class="circle">☰</button></header>
 <div id="siteDrawer" class="site-drawer hidden"><div class="drawer-backdrop" data-drawer-close></div><aside class="drawer-panel"><div class="drawer-head"><b data-business-name>Top Burger</b><button data-drawer-close>✕</button></div><div id="drawerItems" class="drawer-items"></div></aside></div>
 <div id="searchBar" class="searchbar hidden"><input id="search" type="search" placeholder="ابحث عن وجبتك..."><button id="closeSearch">✕</button></div>
 <main><section class="v6-hero" id="v6Hero"><div class="v6-hero-track" id="v6HeroTrack"></div><div class="v6-hero-dots" id="v6HeroDots"></div></section><section class="welcome"><div><b data-business-name>Top Burger</b><span data-business-tagline>🔥 طعم يستاهل التجربة</span><small id="branchInfo" class="branch-current-status"></small><div id="branchContact" class="branch-contact"></div></div><label>الفرع <select id="branch"></select></label></section>
@@ -49,11 +49,11 @@
 <div id="trackModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="trackModal">×</button><h2 id="trackModalTitle">متابعة الطلب</h2><p class="track-help">اكتب رقم الموبايل المستخدم في الطلب.</p><label class="field">رقم الموبايل<input id="trackPhone" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></label><button id="trackOrderBtn" class="checkout-submit">عرض طلباتي</button><div id="trackResult" class="track-result"></div></div></div>
 
 <div id="infoModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="infoModal">×</button><h2 id="infoModalTitle"></h2><div id="infoModalBody"></div></div></div>
-<script src="app.js?v=6.0.0-preview"></script>
+<script src="app.js?v=6.0.1-preview-fixed"></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./sw.js?v=6.0.0-preview', {updateViaCache:'none'}).catch(function (err) {
+    navigator.serviceWorker.register('./sw.js?v=6.0.1-preview-fixed', {updateViaCache:'none'}).catch(function (err) {
       console.warn('Service Worker registration failed:', err);
     });
   });

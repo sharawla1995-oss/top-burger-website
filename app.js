@@ -297,8 +297,6 @@ document.addEventListener('click',e=>{
   const co=e.target.closest('[data-cancel-order]');if(co)cancelCustomerOrder(co.dataset.cancelOrder);
 });
 $('#trackOrderBtn').onclick=trackOrder;
-load();
-setInterval(()=>{if(data.branches.length){if(!$('#branchGate').classList.contains('hidden'))renderBranchGate();if(data.branch)renderBranch()}},30000);
 
 
 // Website V6 UI Preview — no order/business logic changes.
@@ -332,3 +330,7 @@ document.addEventListener('click',e=>{
  if(k==='branches')openDrawer();
 });
 document.querySelector('#v6ShowMenu')?.addEventListener('click',()=>document.querySelector('#categoryCards')?.scrollIntoView({behavior:'smooth'}));
+
+// Start only after all V6 UI hooks are installed.
+load();
+setInterval(()=>{if(data.branches.length){if(!$('#branchGate').classList.contains('hidden'))renderBranchGate();if(data.branch)renderBranch()}},30000);
