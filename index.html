@@ -5,7 +5,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Top Burger">
-<title>Top Burger</title><link rel="stylesheet" href="styles.css?v=5.4.0"></head><body>
+<title>Top Burger</title><link rel="stylesheet" href="styles.css?v=6.0.0-preview"></head><body>
 
 <div id="branchGate" class="branch-gate">
   <div class="branch-gate-card">
@@ -18,10 +18,16 @@
 <div class="topline"></div><header class="header"><button id="searchBtn" class="circle">⌕</button><div class="brand"><div class="logo"><img data-business-logo class="business-logo-img hidden" alt=""><div data-business-logo-fallback><b data-business-name>Top Burger</b></div></div></div><button id="menuBtn" class="circle">☰</button></header>
 <div id="siteDrawer" class="site-drawer hidden"><div class="drawer-backdrop" data-drawer-close></div><aside class="drawer-panel"><div class="drawer-head"><b data-business-name>Top Burger</b><button data-drawer-close>✕</button></div><div id="drawerItems" class="drawer-items"></div></aside></div>
 <div id="searchBar" class="searchbar hidden"><input id="search" type="search" placeholder="ابحث عن وجبتك..."><button id="closeSearch">✕</button></div>
-<main><section class="welcome"><div><b data-business-name>Top Burger</b><span data-business-tagline>🔥 طعم يستاهل التجربة</span><small id="branchInfo" class="branch-current-status"></small><div id="branchContact" class="branch-contact"></div></div><label>الفرع <select id="branch"></select></label></section>
-<section id="categoryView"><h2>اختار من المنيو</h2><div id="categoryCards" class="category-grid"></div></section>
+<main><section class="v6-hero" id="v6Hero"><div class="v6-hero-track" id="v6HeroTrack"></div><div class="v6-hero-dots" id="v6HeroDots"></div></section><section class="welcome"><div><b data-business-name>Top Burger</b><span data-business-tagline>🔥 طعم يستاهل التجربة</span><small id="branchInfo" class="branch-current-status"></small><div id="branchContact" class="branch-contact"></div></div><label>الفرع <select id="branch"></select></label></section>
+<section id="categoryView"><div class="v6-section-head"><h2>اختار من المنيو</h2><button type="button" id="v6ShowMenu">عرض الكل</button></div><div id="categoryCards" class="category-grid"></div></section>
 <section id="productsView" class="hidden"><div class="section-title"><button id="backBtn">←</button><h2 id="categoryTitle">المنيو</h2></div><div id="cats" class="cats"></div><div id="status" class="status">جاري تحميل المنيو...</div><div id="products" class="product-grid"></div></section></main>
-<button id="cartBar" class="cartbar"><span>ملخص الطلب</span><b id="cartCount">0</b><strong id="cartTotal">0 ج.م</strong></button>
+<nav class="v6-bottom-nav" aria-label="التنقل الرئيسي">
+<button type="button" data-v6-nav="home"><span>⌂</span><small>الرئيسية</small></button>
+<button type="button" data-v6-nav="menu"><span>☷</span><small>المنيو</small></button>
+<button type="button" class="v6-cart-nav" data-v6-nav="cart"><span>🛒</span><small>السلة</small><b id="v6CartBadge">0</b></button>
+<button type="button" data-v6-nav="orders"><span>⌕</span><small>طلباتي</small></button>
+<button type="button" data-v6-nav="branches"><span>⌖</span><small>الفروع</small></button>
+</nav>
 <div id="productModal" class="overlay hidden"><div class="sheet"><button class="close" data-close="productModal">✕</button><img id="modalImg" class="modal-img" alt=""><h2 id="modalName"></h2><div id="modalPrice" class="big-price"></div><label class="notes-label">ملاحظات الطلب<textarea id="modalNotes" placeholder="مثال: بدون بصل، الصوص على جنب..."></textarea></label><button id="addToCart" class="primary">أضف للطلب</button></div></div>
 <div id="cartModal" class="overlay hidden"><div class="sheet cart-sheet"><button class="close" data-close="cartModal">✕</button><h2>ملخص الطلب</h2><div id="cartItems"></div><div class="total-row"><span>الإجمالي</span><b id="cartModalTotal">0 ج.م</b></div><button id="checkoutBtn" class="primary">متابعة الطلب</button><p class="hint">المنيو والاختيارات والإضافات متزامنة مع الـ POS. إرسال الطلب للفرع هو الخطوة التالية.</p></div></div>
 <div id="checkoutModal" class="modal hidden">
@@ -43,11 +49,11 @@
 <div id="trackModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="trackModal">×</button><h2 id="trackModalTitle">متابعة الطلب</h2><p class="track-help">اكتب رقم الموبايل المستخدم في الطلب.</p><label class="field">رقم الموبايل<input id="trackPhone" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></label><button id="trackOrderBtn" class="checkout-submit">عرض طلباتي</button><div id="trackResult" class="track-result"></div></div></div>
 
 <div id="infoModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="infoModal">×</button><h2 id="infoModalTitle"></h2><div id="infoModalBody"></div></div></div>
-<script src="app.js?v=5.4.0"></script>
+<script src="app.js?v=6.0.0-preview"></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./sw.js?v=5.4.0', {updateViaCache:'none'}).catch(function (err) {
+    navigator.serviceWorker.register('./sw.js?v=6.0.0-preview', {updateViaCache:'none'}).catch(function (err) {
       console.warn('Service Worker registration failed:', err);
     });
   });

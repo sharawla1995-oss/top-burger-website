@@ -299,3 +299,36 @@ document.addEventListener('click',e=>{
 $('#trackOrderBtn').onclick=trackOrder;
 load();
 setInterval(()=>{if(data.branches.length){if(!$('#branchGate').classList.contains('hidden'))renderBranchGate();if(data.branch)renderBranch()}},30000);
+
+
+// Website V6 UI Preview — no order/business logic changes.
+let v6HeroIndex=0,v6HeroTimer=null;
+function v6Featured(){
+  const rows=(data.products||[]).filter(p=>available(p));
+  const withImg=rows.filter(p=>p.image_url);
+  return (withImg.length?withImg:rows).slice(0,4);
+}
+function renderV6Hero(){
+  const track=document.querySelector('#v6HeroTrack'),dots=document.querySelector('#v6HeroDots');
+  if(!track||!dots)return;
+  const rows=v6Featured();
+  if(!rows.length){track.innerHTML='<div class="v6-hero-slide"><div class="v6-hero-copy"><b>Top Burger</b><small>اختار فرعك واطلب بسهولة</small><span>اطلب دلوقتي</span></div></div>';dots.innerHTML='';return}
+  track.innerHTML=rows.map((p,i)=>`<button type="button" class="v6-hero-slide" data-v6-product="${p.id}" aria-label="${esc(p.name)}">${p.image_url?`<img src="${esc(p.image_url)}" alt="" loading="${i?'lazy':'eager'}">`:''}<div class="v6-hero-copy"><small>اختيارات Top Burger</small><b>${esc(p.name)}</b><span>${money(priceFor(p))}</span></div></button>`).join('');
+  dots.innerHTML=rows.map((_,i)=>`<i class="${i===0?'active':''}"></i>`).join('');v6HeroIndex=0;v6MoveHero();
+  clearInterval(v6HeroTimer);if(rows.length>1)v6HeroTimer=setInterval(()=>{v6HeroIndex=(v6HeroIndex+1)%rows.length;v6MoveHero()},4200);
+}
+function v6MoveHero(){const t=document.querySelector('#v6HeroTrack');if(!t)return;t.style.transform=`translateX(-${v6HeroIndex*100}%)`;document.querySelectorAll('#v6HeroDots i').forEach((d,i)=>d.classList.toggle('active',i===v6HeroIndex))}
+function v6UpdateCartBadge(){const b=document.querySelector('#v6CartBadge');if(b)b.textContent=data.cart.reduce((s,x)=>s+x.qty,0)}
+const _v6RenderAll=renderAll;renderAll=function(){_v6RenderAll();renderV6Hero();v6UpdateCartBadge()};
+const _v6RenderCart=renderCart;renderCart=function(){_v6RenderCart();v6UpdateCartBadge()};
+document.addEventListener('click',e=>{
+ const hp=e.target.closest('[data-v6-product]');if(hp){const p=data.products.find(x=>String(x.id)===String(hp.dataset.v6Product));if(p)openProduct(p.id);return}
+ const n=e.target.closest('[data-v6-nav]');if(!n)return;const k=n.dataset.v6Nav;
+ document.querySelectorAll('[data-v6-nav]').forEach(x=>x.classList.toggle('active',x===n));
+ if(k==='home'){document.querySelector('#productsView')?.classList.add('hidden');document.querySelector('#categoryView')?.classList.remove('hidden');scrollTo({top:0,behavior:'smooth'})}
+ if(k==='menu'){document.querySelector('#categoryView')?.scrollIntoView({behavior:'smooth',block:'start'})}
+ if(k==='cart')document.querySelector('#cartModal')?.classList.remove('hidden');
+ if(k==='orders')openTrackModal('track');
+ if(k==='branches')openDrawer();
+});
+document.querySelector('#v6ShowMenu')?.addEventListener('click',()=>document.querySelector('#categoryCards')?.scrollIntoView({behavior:'smooth'}));

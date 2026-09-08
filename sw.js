@@ -1,5 +1,5 @@
-const CACHE_NAME = 'top-burger-v5.4.0';
-const APP_SHELL = ['./','./index.html','./styles.css?v=5.4.0','./app.js?v=5.4.0','./manifest.json','./icon-192.png','./icon-512.png'];
+const CACHE_NAME = 'top-burger-v6.0.0-preview';
+const APP_SHELL = ['./','./index.html','./styles.css?v=6.0.0-preview','./app.js?v=6.0.0-preview','./manifest.json','./icon-192.png','./icon-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL).catch(()=>{})));
   self.skipWaiting();
