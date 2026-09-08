@@ -5,28 +5,37 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Top Burger">
-<title>Top Burger</title><link rel="stylesheet" href="styles.css?v=6.0.0-preview"></head><body>
+<title>Top Burger</title><link rel="stylesheet" href="styles.css?v=6.0.0"></head><body>
 
 <div id="branchGate" class="branch-gate">
   <div class="branch-gate-card">
-    <div class="branch-gate-logo"><img src="top-burger-logo.jpg?v=6.0.1" class="v6-static-logo" alt="Top Burger"></div>
+    <div class="branch-gate-logo v6-logo-box"><img src="top-burger-logo.jpg" class="v6-logo-image" alt="Top Burger"></div>
     <h1>اختار الفرع</h1>
     <p>اختار الفرع اللي هتطلب منه علشان نعرض لك التوافر والأسعار الخاصة بيه.</p>
     <div id="branchGateOptions" class="branch-gate-options"><div class="branch-loading">جاري تحميل الفروع...</div></div>
   </div>
 </div>
-<div class="topline"></div><header class="header"><button id="searchBtn" class="circle">⌕</button><div class="brand"><div class="logo"><img src="top-burger-logo.jpg?v=6.0.1" class="v6-header-logo" alt="Top Burger"></div></div><button id="menuBtn" class="circle">☰</button></header>
+<div class="topline"></div><header class="header"><button id="searchBtn" class="circle">⌕</button><div class="brand"><div class="logo v6-header-logo"><img src="top-burger-logo.jpg" class="v6-logo-image" alt="Top Burger"></div></div><button id="menuBtn" class="circle">☰</button></header>
 <div id="siteDrawer" class="site-drawer hidden"><div class="drawer-backdrop" data-drawer-close></div><aside class="drawer-panel"><div class="drawer-head"><b data-business-name>Top Burger</b><button data-drawer-close>✕</button></div><div id="drawerItems" class="drawer-items"></div></aside></div>
 <div id="searchBar" class="searchbar hidden"><input id="search" type="search" placeholder="ابحث عن وجبتك..."><button id="closeSearch">✕</button></div>
-<main><section class="v6-hero" id="v6Hero"><div class="v6-hero-track" id="v6HeroTrack"></div><div class="v6-hero-dots" id="v6HeroDots"></div></section><section class="welcome"><div><b data-business-name>Top Burger</b><span data-business-tagline>🔥 طعم يستاهل التجربة</span><small id="branchInfo" class="branch-current-status"></small><div id="branchContact" class="branch-contact"></div></div><label>الفرع <select id="branch"></select></label></section>
-<section id="categoryView"><div class="v6-section-head"><h2>اختار من المنيو</h2><button type="button" id="v6ShowMenu">عرض الكل</button></div><div id="categoryCards" class="category-grid"></div></section>
+<main><section class="welcome"><div><b data-business-name>Top Burger</b><span data-business-tagline>🔥 طعم يستاهل التجربة</span><small id="branchInfo" class="branch-current-status"></small><div id="branchContact" class="branch-contact"></div></div><label>الفرع <select id="branch"></select></label></section>
+<section id="v6HomeHero" class="v6-home-hero" aria-label="عروض Top Burger">
+  <div class="v6-hero-track">
+    <article class="v6-hero-slide"><div><small>TOP BURGER</small><h1>اختار أكلك<br>بطريقتك</h1><p>دليفري أو استلام من الفرع — والطلب يوصل للكاشير مباشرة.</p><button type="button" data-v6-go-menu>شوف المنيو</button></div><img src="top-burger-logo.jpg" alt="Top Burger"></article>
+    <article class="v6-hero-slide"><div><small>طلبك معاك خطوة بخطوة</small><h1>تابع طلبك<br>برقم الموبايل</h1><p>اعرف حالة الطلب من الاستلام لحد التسليم.</p><button type="button" data-v6-track>متابعة الطلب</button></div><div class="v6-hero-icon">🛵</div></article>
+    <article class="v6-hero-slide"><div><small>أسرع وأسهل</small><h1>السلة بقت<br>أوضح</h1><p>عدّل الكمية وراجع إجمالي طلبك قبل التأكيد.</p><button type="button" data-v6-cart>افتح السلة</button></div><div class="v6-hero-icon">🛒</div></article>
+  </div>
+  <div class="v6-hero-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+</section>
+<section id="categoryView" class="v6-menu-section"><div class="v6-section-head"><div><small>منيو Top Burger</small><h2>اختار من المنيو</h2></div><button type="button" id="v6MenuSearch">⌕ بحث</button></div><div id="categoryCards" class="category-grid"></div></section>
 <section id="productsView" class="hidden"><div class="section-title"><button id="backBtn">←</button><h2 id="categoryTitle">المنيو</h2></div><div id="cats" class="cats"></div><div id="status" class="status">جاري تحميل المنيو...</div><div id="products" class="product-grid"></div></section></main>
-<nav class="v6-bottom-nav" aria-label="التنقل الرئيسي">
-<button type="button" data-v6-nav="home"><span>⌂</span><small>الرئيسية</small></button>
-<button type="button" data-v6-nav="menu"><span>☷</span><small>المنيو</small></button>
-<button type="button" class="v6-cart-nav" data-v6-nav="cart"><span>🛒</span><small>السلة</small><b id="v6CartBadge">0</b></button>
-<button type="button" data-v6-nav="orders"><span>⌕</span><small>طلباتي</small></button>
-<button type="button" data-v6-nav="branches"><span>⌖</span><small>الفروع</small></button>
+<button id="cartBar" class="cartbar"><span>ملخص الطلب</span><b id="cartCount">0</b><strong id="cartTotal">0 ج.م</strong></button>
+<nav id="v6BottomNav" class="v6-bottom-nav" aria-label="التنقل الرئيسي">
+  <button type="button" data-v6-nav="home"><span>⌂</span><small>الرئيسية</small></button>
+  <button type="button" data-v6-nav="menu"><span>☷</span><small>المنيو</small></button>
+  <button type="button" data-v6-nav="cart" class="v6-cart-nav"><span>🛒</span><b id="v6CartBadge">0</b><small>السلة</small></button>
+  <button type="button" data-v6-nav="orders"><span>⌕</span><small>طلباتي</small></button>
+  <button type="button" data-v6-nav="branches"><span>⌖</span><small>الفروع</small></button>
 </nav>
 <div id="productModal" class="overlay hidden"><div class="sheet"><button class="close" data-close="productModal">✕</button><img id="modalImg" class="modal-img" alt=""><h2 id="modalName"></h2><div id="modalPrice" class="big-price"></div><label class="notes-label">ملاحظات الطلب<textarea id="modalNotes" placeholder="مثال: بدون بصل، الصوص على جنب..."></textarea></label><button id="addToCart" class="primary">أضف للطلب</button></div></div>
 <div id="cartModal" class="overlay hidden"><div class="sheet cart-sheet"><button class="close" data-close="cartModal">✕</button><h2>ملخص الطلب</h2><div id="cartItems"></div><div class="total-row"><span>الإجمالي</span><b id="cartModalTotal">0 ج.م</b></div><button id="checkoutBtn" class="primary">متابعة الطلب</button><p class="hint">المنيو والاختيارات والإضافات متزامنة مع الـ POS. إرسال الطلب للفرع هو الخطوة التالية.</p></div></div>
@@ -49,15 +58,40 @@
 <div id="trackModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="trackModal">×</button><h2 id="trackModalTitle">متابعة الطلب</h2><p class="track-help">اكتب رقم الموبايل المستخدم في الطلب.</p><label class="field">رقم الموبايل<input id="trackPhone" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></label><button id="trackOrderBtn" class="checkout-submit">عرض طلباتي</button><div id="trackResult" class="track-result"></div></div></div>
 
 <div id="infoModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="infoModal">×</button><h2 id="infoModalTitle"></h2><div id="infoModalBody"></div></div></div>
-<script src="app.js?v=6.0.1-preview-fixed"></script>
+<script src="app.js?v=6.0.0"></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./sw.js?v=6.0.1-preview-fixed', {updateViaCache:'none'}).catch(function (err) {
+    navigator.serviceWorker.register('./sw.js?v=6.0.0', {updateViaCache:'none'}).catch(function (err) {
       console.warn('Service Worker registration failed:', err);
     });
   });
 }
 </script>
 <script src="install-prompt.js"></script>
+<script>
+(function(){
+  function byId(id){return document.getElementById(id)}
+  function openCart(){byId('cartModal')?.classList.remove('hidden')}
+  function goMenu(){byId('categoryView')?.scrollIntoView({behavior:'smooth',block:'start'})}
+  function openBranches(){if(typeof renderBranchGate==='function')renderBranchGate();byId('branchGate')?.classList.remove('hidden')}
+  function openOrders(){if(typeof openTrackModal==='function')openTrackModal('track')}
+  document.addEventListener('click',function(e){
+    if(e.target.closest('[data-v6-go-menu]'))goMenu();
+    if(e.target.closest('[data-v6-track]'))openOrders();
+    if(e.target.closest('[data-v6-cart]'))openCart();
+    if(e.target.closest('#v6MenuSearch'))byId('searchBtn')?.click();
+    var n=e.target.closest('[data-v6-nav]'); if(!n)return;
+    var a=n.getAttribute('data-v6-nav');
+    if(a==='home')window.scrollTo({top:0,behavior:'smooth'});
+    if(a==='menu')goMenu();
+    if(a==='cart')openCart();
+    if(a==='orders')openOrders();
+    if(a==='branches')openBranches();
+  });
+  var source=byId('cartCount'), badge=byId('v6CartBadge');
+  function syncBadge(){if(source&&badge){badge.textContent=source.textContent||'0';badge.classList.toggle('is-empty',Number(source.textContent||0)===0)}}
+  syncBadge(); if(source)new MutationObserver(syncBadge).observe(source,{childList:true,characterData:true,subtree:true});
+})();
+</script>
 </body></html>
