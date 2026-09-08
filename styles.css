@@ -39,3 +39,5 @@
 
 /* V5.2.0 Promo Code */
 .website-promo-box{margin:14px 0;padding:14px;border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16)}.website-promo-box h3{margin:0 0 10px}.promo-entry{display:flex;gap:8px}.promo-entry input{flex:1;min-width:0;border:1px solid #ddd;border-radius:12px;padding:12px;font:inherit}.promo-entry button{border:0;border-radius:12px;padding:0 16px;font-weight:800;cursor:pointer}.promo-result{margin-top:9px;padding:9px 10px;border-radius:10px;background:rgba(30,170,90,.14);font-size:13px}.promo-result button{border:0;background:transparent;text-decoration:underline;font-weight:800;cursor:pointer;color:inherit}.promo-summary{color:#177c3a}.checkout-grand{font-size:1.08rem;font-weight:900;border-top:1px dashed rgba(0,0,0,.15);padding-top:10px}
+
+#deliveryZone{width:100%;box-sizing:border-box;margin-top:7px;border:1px solid #ddd;border-radius:14px;padding:13px;font:inherit;background:#fff;color:#111}
