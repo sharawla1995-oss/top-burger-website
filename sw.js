@@ -1,4 +1,4 @@
-const CACHE_NAME = 'top-burger-v6.5.0';
+const CACHE_NAME = 'top-burger-v6.5.1';
 const APP_SHELL = [
   './','./index.html','./styles.css?v=6.5.0','./app.js?v=6.5.0',
   './theme.js?v=6.5.0','./install-prompt.js?v=6.5.0','./manifest.json',
