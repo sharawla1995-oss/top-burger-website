@@ -5,7 +5,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Top Burger">
-<title>Top Burger</title><link rel="stylesheet" href="styles.css?v=6.0.0"></head><body>
+<title>Top Burger</title><link rel="stylesheet" href="styles.css?v=6.2.0"></head><body>
 
 <div id="branchGate" class="branch-gate">
   <div class="branch-gate-card">
@@ -30,6 +30,7 @@
 <section id="categoryView" class="v6-menu-section"><div class="v6-section-head"><div><small>منيو Top Burger</small><h2>اختار من المنيو</h2></div><button type="button" id="v6MenuSearch">⌕ بحث</button></div><div id="categoryCards" class="category-grid"></div></section>
 <section id="productsView" class="hidden"><div class="section-title"><button id="backBtn">←</button><h2 id="categoryTitle">المنيو</h2></div><div id="cats" class="cats"></div><div id="status" class="status">جاري تحميل المنيو...</div><div id="products" class="product-grid"></div></section></main>
 <button id="cartBar" class="cartbar"><span>ملخص الطلب</span><b id="cartCount">0</b><strong id="cartTotal">0 ج.م</strong></button>
+<button id="v6QuickCart" class="v6-quick-cart hidden" type="button"><span>عرض السلة</span><b id="v6QuickCartTotal">0 ج.م</b></button>
 <nav id="v6BottomNav" class="v6-bottom-nav" aria-label="التنقل الرئيسي">
   <button type="button" data-v6-nav="home"><span>⌂</span><small>الرئيسية</small></button>
   <button type="button" data-v6-nav="menu"><span>☷</span><small>المنيو</small></button>
@@ -49,7 +50,7 @@
     <label class="field">ملاحظات الطلب<textarea id="orderNotes" rows="2" placeholder="اختياري"></textarea></label>
     <div id="websitePromoBox" class="website-promo-box"><h3>🎟️ عندك برومو كود؟</h3><div class="promo-entry"><input id="websitePromoCode" placeholder="اكتب الكود"><button id="applyWebsitePromo" type="button">تطبيق</button></div><div id="websitePromoResult" class="promo-result hidden"></div></div><div id="websitePaymentBox" class="payment-box"><h3>طريقة الدفع</h3><div id="websitePaymentMethods" class="payment-methods"></div><div id="paymentInstructions" class="payment-instructions hidden"></div><label id="paymentReferenceField" class="field hidden">رقم مرجع التحويل<input id="paymentReference" placeholder="اختياري"></label><label id="paymentReceiptField" class="field hidden">صورة إيصال الدفع<input id="paymentReceipt" type="file" accept="image/jpeg,image/png,image/webp"></label></div>
     <div class="checkout-summary"><span>إجمالي الأصناف</span><b id="checkoutSubtotal">0 ج.م</b></div><div id="checkoutPromoLine" class="checkout-summary promo-summary hidden"><span>خصم البرومو</span><b id="checkoutPromoDiscount">- 0 ج.م</b></div><div id="checkoutDeliveryLine" class="checkout-summary"><span>رسوم التوصيل</span><b id="checkoutDeliveryFee">0 ج.م</b></div><div class="checkout-summary checkout-grand"><span>المطلوب</span><b id="checkoutTotal">0 ج.م</b></div>
-    <small class="delivery-note" id="checkoutFulfillmentNote">رسوم التوصيل يؤكدها الفرع عند مراجعة الطلب.</small>
+    <small class="delivery-note" id="checkoutFulfillmentNote">اختار منطقة التوصيل وسيظهر الرسم فورًا قبل تأكيد الطلب.</small>
     <button id="submitOrder" class="checkout-submit">تأكيد الطلب</button>
   </div>
 </div>
@@ -58,11 +59,11 @@
 <div id="trackModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="trackModal">×</button><h2 id="trackModalTitle">متابعة الطلب</h2><p class="track-help">اكتب رقم الموبايل المستخدم في الطلب.</p><label class="field">رقم الموبايل<input id="trackPhone" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></label><button id="trackOrderBtn" class="checkout-submit">عرض طلباتي</button><div id="trackResult" class="track-result"></div></div></div>
 
 <div id="infoModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="infoModal">×</button><h2 id="infoModalTitle"></h2><div id="infoModalBody"></div></div></div>
-<script src="app.js?v=6.0.0"></script>
+<script src="app.js?v=6.2.0"></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./sw.js?v=6.0.0', {updateViaCache:'none'}).catch(function (err) {
+    navigator.serviceWorker.register('./sw.js?v=6.2.0', {updateViaCache:'none'}).catch(function (err) {
       console.warn('Service Worker registration failed:', err);
     });
   });
@@ -89,9 +90,10 @@ if ('serviceWorker' in navigator) {
     if(a==='orders')openOrders();
     if(a==='branches')openBranches();
   });
-  var source=byId('cartCount'), badge=byId('v6CartBadge');
-  function syncBadge(){if(source&&badge){badge.textContent=source.textContent||'0';badge.classList.toggle('is-empty',Number(source.textContent||0)===0)}}
-  syncBadge(); if(source)new MutationObserver(syncBadge).observe(source,{childList:true,characterData:true,subtree:true});
+  var source=byId('cartCount'), badge=byId('v6CartBadge'), quick=byId('v6QuickCart'), quickTotal=byId('v6QuickCartTotal'), totalSource=byId('cartTotal');
+  function syncBadge(){var n=Number(source?.textContent||0);if(badge){badge.textContent=String(n);badge.classList.toggle('is-empty',n===0)}if(quick){quick.classList.toggle('hidden',n===0)}if(quickTotal&&totalSource)quickTotal.textContent=totalSource.textContent||'0 ج.م'}
+  syncBadge(); if(source)new MutationObserver(syncBadge).observe(source,{childList:true,characterData:true,subtree:true}); if(totalSource)new MutationObserver(syncBadge).observe(totalSource,{childList:true,characterData:true,subtree:true});
+  quick?.addEventListener('click',openCart);
 })();
 </script>
 </body></html>
