@@ -1,7 +1,7 @@
-const CACHE_NAME = 'top-burger-v6.5.1';
+const CACHE_NAME = 'top-burger-v6.6.1';
 const APP_SHELL = [
-  './','./index.html','./styles.css?v=6.5.0','./app.js?v=6.5.0',
-  './theme.js?v=6.5.0','./install-prompt.js?v=6.5.0','./manifest.json',
+  './','./index.html','./styles.css?v=6.6.1','./app.js?v=6.6.1',
+  './theme.js?v=6.6.1','./install-prompt.js?v=6.6.1','./manifest.json',
   './icon-192.png','./icon-512.png','./top-burger-logo.jpg'
 ];
 self.addEventListener('install', event => {
