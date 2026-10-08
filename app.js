@@ -2,7 +2,7 @@ const SUPABASE_URL='https://kzokretuuigjhxjzdlmk.supabase.co';
 const KEY='sb_publishable_m8gAAZTKnOvCSWNvQijIXw_H1obE9vg';
 const H={apikey:KEY,Authorization:`Bearer ${KEY}`};
 const $=s=>document.querySelector(s);
-let data={branches:[],categories:[],products:[],branchProducts:[],branchSettings:[],branchHours:[],variants:[],modifiers:[],productModifiers:[],paymentMethods:[],branchPaymentMethods:[],websiteSettings:{id:1,theme_name:'topburger',page_background:'#b51f2b',surface_color:'#ffffff',text_color:'#171717',card_radius:22,show_contact:true,show_locations:true,show_track_order:true,show_cancel_order:true,allow_customer_cancel:true,show_payment_reference:true,show_payment_receipt_upload:true,show_payment_status:true},business:{business_name:'Top Burger',tagline:'🔥 طعم يستاهل التجربة',logo_url:'',currency_symbol:'ج.م',primary_color:'#b51f2b',accent_color:'#f0643d'},branch:null,cat:null,q:'',cart:[],selected:null,selectedVariant:null,selectedExtras:new Set(),selectedPayment:null,fulfillment:'delivery',appliedPromo:null,deliveryZones:[],selectedDeliveryZone:null};
+let data={branches:[],categories:[],products:[],branchProducts:[],branchSettings:[],branchHours:[],variants:[],modifiers:[],productModifiers:[],paymentMethods:[],branchPaymentMethods:[],websiteSettings:{id:1,theme_name:'topburger',page_background:'#b51f2b',surface_color:'#ffffff',text_color:'#171717',card_radius:22,show_contact:true,show_locations:true,show_track_order:true,show_cancel_order:true,allow_customer_cancel:true,show_payment_reference:true,show_payment_receipt_upload:true,show_payment_status:true},business:{business_name:'Top Burger',tagline:'🔥 طعم يستاهل التجربة',logo_url:'',currency_symbol:'ج.م',primary_color:'#b51f2b',accent_color:'#f0643d'},branch:null,cat:null,q:'',cart:[],selected:null,selectedVariant:null,selectedExtras:new Map(),selectedPayment:null,fulfillment:'delivery',appliedPromo:null,deliveryZones:[],selectedDeliveryZone:null};
 
 async function get(path){const r=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{headers:H});if(!r.ok)throw new Error(await r.text());return r.json()}
 async function rpc(name,body){const r=await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`,{method:'POST',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify(body)});let d=null;try{d=await r.json()}catch{}if(!r.ok)throw new Error(d?.message||'تعذر إرسال الطلب');return d}
@@ -207,7 +207,7 @@ function ensureModalSections(){
 function openProduct(id){
   ensureModalSections();
   const p=data.products.find(x=>String(x.id)===String(id));if(!p)return;
-  data.selected=p;data.selectedExtras=new Set();
+  data.selected=p;data.selectedExtras=new Map();
   const vs=productVariants(p);data.selectedVariant=vs[0]||null;
   $('#modalName').textContent=p.name;$('#modalImg').src=p.image_url||'';$('#modalImg').style.display=p.image_url?'block':'none';$('#modalNotes').value='';
   if(vs.length){
@@ -218,30 +218,31 @@ function openProduct(id){
   const extras=productExtras(p);
   if(extras.length){
     $('#extrasBox').classList.remove('hidden');
-    $('#extraOptions').innerHTML=extras.map(m=>`<label class="extra-row"><input type="checkbox" data-extra="${m.id}"><span>${esc(m.name)}</span><b>+ ${money(m.price)}</b></label>`).join('');
+    $('#extraOptions').innerHTML=extras.map(m=>`<div class="extra-row"><span>${esc(m.name)}</span><b>+ ${money(m.price)}</b><div class="extra-qty"><button type="button" data-extra-minus="${m.id}">−</button><strong data-extra-count="${m.id}">0</strong><button type="button" data-extra-plus="${m.id}">+</button></div></div>`).join('');
   }else $('#extrasBox').classList.add('hidden');
   $('.notes-label').style.display=p.allow_item_notes===false?'none':'block';
   $('#productModal').classList.remove('hidden');
 }
 function currentUnitPrice(){
   const base=data.selectedVariant?Number(data.selectedVariant.price||0):priceFor(data.selected);
-  const extras=[...data.selectedExtras].map(id=>data.modifiers.find(m=>String(m.id)===String(id))).filter(Boolean).reduce((s,m)=>s+Number(m.price||0),0);
+  const extras=[...data.selectedExtras.entries()].reduce((sum,[id,qty])=>{const m=data.modifiers.find(x=>String(x.id)===String(id));return sum+(m?Number(m.price||0)*Number(qty||0):0)},0);
   return base+extras;
 }
 function refreshModalPrice(){$('#modalPrice').textContent=money(currentUnitPrice())}
 function addSelected(){
   if(!data.selected)return;
-  const chosenExtras=[...data.selectedExtras].map(id=>data.modifiers.find(m=>String(m.id)===String(id))).filter(Boolean).map(m=>({id:m.id,name:m.name,price:Number(m.price||0)}));
+  const chosenExtras=[...data.selectedExtras.entries()].map(([id,quantity])=>{const m=data.modifiers.find(x=>String(x.id)===String(id));return m?{id:m.id,name:m.name,price:Number(m.price||0),quantity:Number(quantity||1)}:null}).filter(Boolean);
   data.appliedPromo=null;data.cart.push({key:Date.now()+Math.random(),product_id:data.selected.id,name:data.selected.name,variant_id:data.selectedVariant?.id||null,variant_name:data.selectedVariant?.name||'',base_price:data.selectedVariant?Number(data.selectedVariant.price||0):priceFor(data.selected),extras:chosenExtras,price:currentUnitPrice(),qty:1,notes:$('#modalNotes').value.trim()});
   $('#productModal').classList.add('hidden');renderCart();
 }
 function renderCart(){
   const count=data.cart.reduce((s,x)=>s+x.qty,0),total=data.cart.reduce((s,x)=>s+x.qty*x.price,0);
   $('#cartCount').textContent=count;$('#cartTotal').textContent=money(total);$('#cartModalTotal').textContent=money(total);renderWebsiteCheckoutTotals();
-  $('#cartItems').innerHTML=data.cart.length?data.cart.map(x=>{const details=[x.variant_name, ...(x.extras||[]).map(e=>e.name), x.notes].filter(Boolean).join(' • ');return `<div class="cart-item"><div><b>${esc(x.name)}</b><small>${money(x.price)}${details?' • '+esc(details):''}</small></div><div class="qty"><button data-minus="${x.key}">−</button><b>${x.qty}</b><button data-plus="${x.key}">+</button></div></div>`}).join(''):'<div class="empty">السلة فاضية</div>'
+  $('#cartItems').innerHTML=data.cart.length?data.cart.map(x=>{const details=[x.variant_name, ...(x.extras||[]).map(e=>`${e.name}${Number(e.quantity||1)>1?' ×'+Number(e.quantity||1):''}`), x.notes].filter(Boolean).join(' • ');return `<div class="cart-item"><div><b>${esc(x.name)}</b><small>${money(x.price)}${details?' • '+esc(details):''}</small></div><div class="qty"><button data-minus="${x.key}">−</button><b>${x.qty}</b><button data-plus="${x.key}">+</button></div></div>`}).join(''):'<div class="empty">السلة فاضية</div>'
 }
 function qty(key,d){const x=data.cart.find(i=>String(i.key)===String(key));if(!x)return;data.appliedPromo=null;x.qty+=d;if(x.qty<=0)data.cart=data.cart.filter(i=>i!==x);renderCart()}
 
+document.addEventListener('click',e=>{const plus=e.target.closest('[data-extra-plus]'),minus=e.target.closest('[data-extra-minus]');if(!plus&&!minus)return;const id=String((plus||minus).dataset.extraPlus||(plus||minus).dataset.extraMinus),cur=Number(data.selectedExtras.get(id)||0),next=Math.max(0,cur+(plus?1:-1));if(next)data.selectedExtras.set(id,next);else data.selectedExtras.delete(id);const out=document.querySelector(`[data-extra-count="${id}"]`);if(out)out.textContent=String(next);refreshModalPrice()});
 document.addEventListener('click',e=>{if(e.target.closest('[data-choose-branch]')){chooseBranch(e.target.closest('[data-choose-branch]').dataset.chooseBranch);return;}
   const cat=e.target.closest('[data-open-cat]');if(cat)openCategory(cat.dataset.openCat);
   const add=e.target.closest('[data-add]');if(add){e.stopPropagation();openProduct(add.dataset.add)}
@@ -280,7 +281,7 @@ $('#submitOrder').onclick=async()=>{
       product_id:x.product_id,
       variant_id:x.variant_id,
       quantity:x.qty,
-      modifiers:(x.extras||[]).map(e=>({modifier_id:e.id})),
+      modifiers:(x.extras||[]).map(e=>({modifier_id:e.id,quantity:Number(e.quantity||1)})),
       notes:x.notes||''
     }));
     const pay=branchPaymentRows().find(x=>String(x.code)===String(data.selectedPayment));if(!pay)throw new Error('اختار طريقة دفع');
