@@ -1,8 +1,8 @@
-const CACHE_NAME = 'top-burger-v6.6.1';
+const CACHE_NAME = 'top-chicken-beta-v1';
 const APP_SHELL = [
   './','./index.html','./styles.css?v=6.6.1','./app.js?v=6.6.1',
   './theme.js?v=6.6.1','./install-prompt.js?v=6.6.1','./manifest.json',
-  './icon-192.png','./icon-512.png','./top-burger-logo.jpg'
+  './icon-192.png','./icon-512.png'
 ];
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
@@ -19,7 +19,7 @@ self.addEventListener('activate', event => {
   })());
 });
 self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
+  if (event.request.method !== 'GET' || new URL(event.request.url).origin !== self.location.origin) return;
   event.respondWith((async()=>{
     try{
       const response=await fetch(event.request);
