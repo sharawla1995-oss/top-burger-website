@@ -233,3 +233,10 @@ html[data-theme="dark"] .welcome select,html[data-theme="light"] .welcome select
 
 /* Beta product sheet: accessible quantity selector. */
 .product-quantity-control{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;margin:12px 0;border:1px solid #68686866;border-radius:14px;font-weight:800}.product-quantity-control .extra-qty button{background:var(--site-surface,#252525);color:inherit;cursor:pointer}.product-quantity-control .extra-qty strong{min-width:28px;text-align:center}
+
+/* Top Chicken Beta: quantity selector in product details. */
+.product-quantity-control{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:14px 0;padding:12px 14px;background:var(--site-surface,#fff);color:var(--site-text,#171717);border:1px solid #ddd;border-radius:14px;font-weight:800}
+.product-quantity-control .extra-qty button{background:#f4f4f4;color:#171717;border:1px solid #ddd;min-width:42px;min-height:42px;cursor:pointer}
+.product-quantity-control .extra-qty strong{min-width:30px;text-align:center}
+html[data-theme="dark"] .product-quantity-control{background:#1b1d20;color:#f6f6f6;border-color:#393d42}
+html[data-theme="dark"] .product-quantity-control .extra-qty button{background:#303238;color:#fff;border-color:#555}
