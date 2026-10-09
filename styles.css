@@ -240,3 +240,9 @@ html[data-theme="dark"] .welcome select,html[data-theme="light"] .welcome select
 .product-quantity-control .extra-qty strong{min-width:30px;text-align:center}
 html[data-theme="dark"] .product-quantity-control{background:#1b1d20;color:#f6f6f6;border-color:#393d42}
 html[data-theme="dark"] .product-quantity-control .extra-qty button{background:#303238;color:#fff;border-color:#555}
+
+/* Top Chicken beta: accessible branch label and brand-safe install prompt. */
+html[data-theme="dark"] .branch-choice,html[data-theme="dark"] .branch-choice b,html[data-theme="dark"] .branch-choice strong,html[data-theme="dark"] .branch-choice span{color:#f7f7f7!important}
+html[data-theme="light"] .branch-choice,html[data-theme="light"] .branch-choice b,html[data-theme="light"] .branch-choice strong,html[data-theme="light"] .branch-choice span{color:#171717!important}
+.top-chicken-install-mark{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0;background:#b51f2b;color:white;border-radius:12px;font-size:26px}
+@media(max-width:420px){.top-chicken-install-mark{width:38px;height:38px;font-size:23px}}
