@@ -51,8 +51,8 @@ async function load(){
       get('modifiers?select=id,name,price,active&active=eq.true&order=id.asc'),
       get('product_modifiers?select=product_id,modifier_id'),
       get('website_settings?select=*&limit=1').catch(()=>[]),
-      get('payment_methods?select=id,code,name,kind,active,sort_order&active=eq.true&order=sort_order.asc,id.asc').catch(()=>[]),
-      get('branch_payment_methods?select=branch_id,payment_method_id,active,is_default,website_enabled,payment_account,payment_instructions,allow_reference,allow_receipt_upload&website_enabled=eq.true&active=eq.true').catch(()=>[]),
+      get('payment_methods?select=id,code,name,kind,active,sort_order&active=eq.true&order=sort_order.asc,id.asc'),
+      get('branch_payment_methods?select=branch_id,payment_method_id,active,is_default,website_enabled,payment_account,payment_instructions,allow_reference,allow_receipt_upload&website_enabled=eq.true&active=eq.true'),
       get('delivery_zones?select=id,branch_id,name,delivery_fee,active&active=eq.true&order=name.asc').catch(()=>[])
     ]);
     data.branches=b;data.categories=c;data.products=p;data.branchProducts=bp;data.branchSettings=bs;data.branchHours=bh||[];if(biz?.[0])data.business={...data.business,...biz[0]};if(ws?.[0])data.websiteSettings={...data.websiteSettings,...ws[0]};data.paymentMethods=pay||[];data.branchPaymentMethods=bpay||[];data.deliveryZones=zones||[];data.variants=v;data.modifiers=m;data.productModifiers=pm;applyBusinessBranding();data.branch=null;renderBranchGate();renderDrawer();
