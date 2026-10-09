@@ -59,11 +59,11 @@
 <div id="trackModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="trackModal">×</button><h2 id="trackModalTitle">متابعة الطلب</h2><p class="track-help">اكتب رقم الموبايل المستخدم في الطلب.</p><label class="field">رقم الموبايل<input id="trackPhone" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx"></label><button id="trackOrderBtn" class="checkout-submit">عرض طلباتي</button><div id="trackResult" class="track-result"></div></div></div>
 
 <div id="infoModal" class="modal hidden"><div class="sheet checkout-sheet"><button class="x" data-close="infoModal">×</button><h2 id="infoModalTitle"></h2><div id="infoModalBody"></div></div></div>
-<script src="app.js?v=6.6.1"></script>
+<script src="app.js?v=top-chicken-beta-1"></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./sw.js?v=6.5.1', {updateViaCache:'none'}).catch(function (err) {
+    navigator.serviceWorker.register('./sw.js?v=top-chicken-beta-1', {updateViaCache:'none'}).catch(function (err) {
       console.warn('Service Worker registration failed:', err);
     });
   });
