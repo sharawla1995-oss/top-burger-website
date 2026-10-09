@@ -1,8 +1,8 @@
-const CACHE_NAME = 'top-chicken-beta-v3';
+const CACHE_NAME = 'top-chicken-beta-v4';
 const APP_SHELL = [
   './','./index.html','./styles.css?v=top-chicken-beta-5','./app.js?v=top-chicken-beta-5',
   './theme.js?v=6.6.1','./install-prompt.js?v=top-chicken-beta-2','./manifest.json',
-  './icon-192.png','./icon-512.png'
+  './top-chicken-icon.svg','./top-chicken-icon.svg'
 ];
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
