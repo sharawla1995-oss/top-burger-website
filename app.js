@@ -14,9 +14,9 @@ function paymentStatusText(v){return ({unpaid:'غير مدفوع',proof_submitte
 function orderStatusText(v,type){const pickup=type==='pickup';return ({pending:'تم إرسال الطلب للفرع',accepted:'تم استلام الطلب',new:'تم استلام الطلب',preparing:'جاري التجهيز',ready:pickup?'جاهز للاستلام':'تم التجهيز',out_for_delivery:'خرج مع المندوب',delivered:'تم التسليم',completed:pickup?'تم تسليم الطلب للعميل':'مكتمل',rejected:'ملغي / مرفوض',cancelled:'ملغي'}[v]||v||'')}
 
 function applyBusinessBranding(){
-  const b=data.business||{};document.title=`${b.business_name||'Top Burger'} | اطلب أونلاين`;
+  const b=data.business||{};document.title=`${b.business_name||'Top Chicken'} | اطلب أونلاين`;
   const root=document.documentElement;if(b.primary_color)root.style.setProperty('--brand-primary',b.primary_color);if(b.accent_color)root.style.setProperty('--brand-accent',b.accent_color);
-  document.querySelectorAll('[data-business-name]').forEach(x=>x.textContent=b.business_name||'Top Burger');
+  document.querySelectorAll('[data-business-name]').forEach(x=>x.textContent=b.business_name||'Top Chicken');
   document.querySelectorAll('[data-business-tagline]').forEach(x=>x.textContent=b.tagline||'');
   document.querySelectorAll('[data-business-logo]').forEach(x=>{if(b.logo_url){x.src=b.logo_url;x.classList.remove('hidden')}else{x.classList.add('hidden')}});
   document.querySelectorAll('[data-business-logo-fallback]').forEach(x=>x.classList.toggle('hidden',!!b.logo_url));applyWebsiteTheme();
