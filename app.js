@@ -234,8 +234,10 @@ function ensureProductQuantityControl(){
   if($('#productQuantityControl'))return;
   const control=document.createElement('div');control.id='productQuantityControl';control.className='product-quantity-control';
   control.innerHTML='<span>الكمية</span><div class="extra-qty"><button type="button" data-product-qty-minus aria-label="تقليل الكمية">−</button><strong id="productQuantityCount">1</strong><button type="button" data-product-qty-plus aria-label="زيادة الكمية">+</button></div>';
-  $('#modalNotes').closest('.field')?.before(control);
-  if(!control.isConnected)$('#modalPrice').after(control);
+  const notes=$('#modalNotes');
+  const notesLabel=notes?.closest('.notes-label');
+  if(notesLabel)notesLabel.before(control);
+  else $('#addToCart').before(control);
 }
 function refreshModalPrice(){const count=$('#productQuantityCount');if(count)count.textContent=String(data.selectedQuantity||1);$('#modalPrice').textContent=money(currentUnitPrice()*(data.selectedQuantity||1))}
 document.addEventListener('click',e=>{if(!e.target.closest('[data-product-qty-plus],[data-product-qty-minus]'))return;data.selectedQuantity=Math.max(1,Math.min(99,(data.selectedQuantity||1)+(e.target.closest('[data-product-qty-plus]')?1:-1)));refreshModalPrice()});
