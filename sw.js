@@ -1,6 +1,6 @@
-const CACHE_NAME = 'top-chicken-beta-v4';
+const CACHE_NAME = 'top-chicken-beta-v5';
 const APP_SHELL = [
-  './','./index.html','./styles.css?v=top-chicken-beta-5','./app.js?v=top-chicken-beta-5',
+  './','./index.html','./styles.css?v=top-chicken-beta-6','./app.js?v=top-chicken-beta-5',
   './theme.js?v=6.6.1','./install-prompt.js?v=top-chicken-beta-2','./manifest.json',
   './top-chicken-icon.svg'
 ];
