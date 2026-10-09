@@ -24,7 +24,7 @@ function applyBusinessBranding(){
 function branchRow(p){return data.branchProducts.find(x=>String(x.branch_id)===String(data.branch)&&String(x.product_id)===String(p.id))}
 function priceFor(p){const o=branchRow(p);return Number(o?.price_override??p.price??0)}
 function available(p){const o=branchRow(p);if(!o)return true;if(o.active===false)return false;const u=o.website_paused_until?new Date(o.website_paused_until):null;return !(u&&!Number.isNaN(u.getTime())&&u.getTime()>Date.now())}
-function branchSetting(id=data.branch){return data.branchSettings.find(x=>String(x.branch_id)===String(id))||{branch_id:id,orders_open:true,orders_paused_until:null,prep_min:30,prep_max:45,schedule_enabled:false,schedule_timezone:'Africa/Cairo'}}
+function branchSetting(id=data.branch){return data.branchSettings.find(x=>String(x.branch_id)===String(id))||{branch_id:id,orders_open:false,orders_paused_until:null,prep_min:30,prep_max:45,schedule_enabled:false,schedule_timezone:'Africa/Cairo'}}
 function branchHours(id=data.branch){return data.branchHours.filter(x=>String(x.branch_id)===String(id))}
 function hhmm(v,fallback='00:00'){const x=String(v||fallback).slice(0,5);return /^\d{2}:\d{2}$/.test(x)?x:fallback}
 function timeMinutes(v){const [h,m]=hhmm(v).split(':').map(Number);return h*60+m}
