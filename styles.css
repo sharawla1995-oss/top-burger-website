@@ -246,3 +246,7 @@ html[data-theme="dark"] .branch-choice,html[data-theme="dark"] .branch-choice b,
 html[data-theme="light"] .branch-choice,html[data-theme="light"] .branch-choice b,html[data-theme="light"] .branch-choice strong,html[data-theme="light"] .branch-choice span{color:#171717!important}
 .top-chicken-install-mark{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0;background:#b51f2b;color:white;border-radius:12px;font-size:26px}
 @media(max-width:420px){.top-chicken-install-mark{width:38px;height:38px;font-size:23px}}
+
+/* Beta product dialog: ensure the dismiss glyph is visible above photography. */
+#productModal .close{display:flex!important;align-items:center!important;justify-content:center!important;color:#111!important;background:#fff!important;font-size:24px!important;font-weight:800!important;line-height:1!important;opacity:1!important;visibility:visible!important;text-shadow:none!important;z-index:15!important;box-shadow:0 2px 12px #0008!important}
+#productModal .close::after{content:"×";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#111;font-size:27px;font-weight:800;background:#fff;border-radius:50%}
