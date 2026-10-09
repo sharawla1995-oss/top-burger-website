@@ -46,11 +46,11 @@ async function load(){
       get('branch_products?select=branch_id,product_id,active,price_override,website_paused_until'),
       get('branch_website_settings?select=*').catch(()=>[]),
       get('branch_website_hours?select=branch_id,day_of_week,enabled,open_time,close_time').catch(()=>[]),
-      get('business_settings?select=*&id=eq.1&limit=1').catch(()=>[]),
+      get('business_settings?select=*&limit=1').catch(()=>[]),
       get('product_variants?select=id,product_id,name,price,sort_order,active&active=eq.true&order=sort_order.asc,id.asc'),
       get('modifiers?select=id,name,price,active&active=eq.true&order=id.asc'),
       get('product_modifiers?select=product_id,modifier_id'),
-      get('website_settings?select=*&id=eq.1&limit=1').catch(()=>[]),
+      get('website_settings?select=*&limit=1').catch(()=>[]),
       get('payment_methods?select=id,code,name,kind,active,sort_order&active=eq.true&order=sort_order.asc,id.asc').catch(()=>[]),
       get('branch_payment_methods?select=branch_id,payment_method_id,active,is_default,website_enabled,payment_account,payment_instructions,allow_reference,allow_receipt_upload&website_enabled=eq.true&active=eq.true').catch(()=>[]),
       get('delivery_zones?select=id,branch_id,name,delivery_fee,active&active=eq.true&order=name.asc').catch(()=>[])
