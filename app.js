@@ -112,7 +112,7 @@ function renderPaymentDetails(){
 async function uploadPaymentReceipt(file){
   if(!file)return null;
   const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
-  const path=`receipts/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext||'jpg'}`;
+  const path=`5358328c-9724-49aa-affc-1bce8be90f92/receipts/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext||'jpg'}`;
   const r=await fetch(`${SUPABASE_URL}/storage/v1/object/website-payment-receipts/${path}`,{method:'POST',headers:{...H,'Content-Type':file.type||'image/jpeg','x-upsert':'false'},body:file});
   if(!r.ok)throw new Error('تعذر رفع صورة الإيصال'); return path;
 }
