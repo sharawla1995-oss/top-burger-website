@@ -45,7 +45,7 @@ async function load(){
       get('products?select=id,category_id,name,price,image_url,active,website_visible,website_sort_order,allow_extras,allow_removals,allow_item_notes,removable_components&active=eq.true&website_visible=eq.true&order=website_sort_order.asc,id.asc'),
       get('branch_products?select=branch_id,product_id,active,price_override,website_paused_until'),
       get('branch_website_settings?select=*'),
-      get('branch_website_hours?select=branch_id,day_of_week,enabled,open_time,close_time').catch(()=>[]),
+      get('branch_website_hours?select=branch_id,day_of_week,enabled,open_time,close_time'),
       get('business_settings?select=*&limit=1').catch(()=>[]),
       get('product_variants?select=id,product_id,name,price,sort_order,active&active=eq.true&order=sort_order.asc,id.asc'),
       get('modifiers?select=id,name,price,active&active=eq.true&order=id.asc'),
