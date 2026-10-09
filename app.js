@@ -2,7 +2,7 @@ const SUPABASE_URL='https://xihcxydjnzemflhedzor.supabase.co';
 const KEY='sb_publishable_D8oSDUbbiw3ckn3XVO5QXw_hcnn-1UG';
 const H={apikey:KEY,Authorization:`Bearer ${KEY}`,'x-sharawla-business':'5358328c-9724-49aa-affc-1bce8be90f92'};
 const $=s=>document.querySelector(s);
-let data={branches:[],categories:[],products:[],branchProducts:[],branchSettings:[],branchHours:[],variants:[],modifiers:[],productModifiers:[],paymentMethods:[],branchPaymentMethods:[],websiteSettings:{id:1,theme_name:'topchicken',page_background:'#b51f2b',surface_color:'#ffffff',text_color:'#171717',card_radius:22,show_contact:true,show_locations:true,show_track_order:true,show_cancel_order:true,allow_customer_cancel:true,show_payment_reference:true,show_payment_receipt_upload:true,show_payment_status:true},business:{business_name:'Top Chicken',tagline:'🍗 توب تشيكن',logo_url:'',currency_symbol:'ج.م',primary_color:'#b51f2b',accent_color:'#f0643d'},branch:null,cat:null,q:'',cart:[],selected:null,selectedVariant:null,selectedExtras:new Map(),selectedPayment:null,fulfillment:'pickup',appliedPromo:null,deliveryZones:[],selectedDeliveryZone:null};
+let data={branches:[],categories:[],products:[],branchProducts:[],branchSettings:[],branchHours:[],variants:[],modifiers:[],productModifiers:[],paymentMethods:[],branchPaymentMethods:[],websiteSettings:{id:1,theme_name:'topchicken',page_background:'#b51f2b',surface_color:'#ffffff',text_color:'#171717',card_radius:22,show_contact:true,show_locations:true,show_track_order:true,show_cancel_order:true,allow_customer_cancel:true,show_payment_reference:true,show_payment_receipt_upload:true,show_payment_status:true},business:{business_name:'Top Chicken',tagline:'🍗 توب تشيكن',logo_url:'',currency_symbol:'ج.م',primary_color:'#b51f2b',accent_color:'#f0643d'},branch:null,cat:null,q:'',cart:[],selected:null,selectedVariant:null,selectedExtras:new Map(),selectedQuantity:1,selectedPayment:null,fulfillment:'pickup',appliedPromo:null,deliveryZones:[],selectedDeliveryZone:null};
 
 async function get(path){const r=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{headers:H});if(!r.ok)throw new Error(await r.text());return r.json()}
 async function rpc(name,body){const r=await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`,{method:'POST',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify(body)});let d=null;try{d=await r.json()}catch{}if(!r.ok)throw new Error(d?.message||'تعذر إرسال الطلب');return d}
@@ -206,8 +206,9 @@ function ensureModalSections(){
 }
 function openProduct(id){
   ensureModalSections();
+  ensureProductQuantityControl();
   const p=data.products.find(x=>String(x.id)===String(id));if(!p)return;
-  data.selected=p;data.selectedExtras=new Map();
+  data.selected=p;data.selectedExtras=new Map();data.selectedQuantity=1;
   const vs=productVariants(p);data.selectedVariant=vs[0]||null;
   $('#modalName').textContent=p.name;$('#modalImg').src=p.image_url||'';$('#modalImg').style.display=p.image_url?'block':'none';$('#modalNotes').value='';
   if(vs.length){
@@ -221,6 +222,7 @@ function openProduct(id){
     $('#extraOptions').innerHTML=extras.map(m=>`<div class="extra-row"><span>${esc(m.name)}</span><b>+ ${money(m.price)}</b><div class="extra-qty"><button type="button" data-extra-minus="${m.id}">−</button><strong data-extra-count="${m.id}">0</strong><button type="button" data-extra-plus="${m.id}">+</button></div></div>`).join('');
   }else $('#extrasBox').classList.add('hidden');
   $('.notes-label').style.display=p.allow_item_notes===false?'none':'block';
+  refreshModalPrice();
   $('#productModal').classList.remove('hidden');
 }
 function currentUnitPrice(){
@@ -228,11 +230,19 @@ function currentUnitPrice(){
   const extras=[...data.selectedExtras.entries()].reduce((sum,[id,qty])=>{const m=data.modifiers.find(x=>String(x.id)===String(id));return sum+(m?Number(m.price||0)*Number(qty||0):0)},0);
   return base+extras;
 }
-function refreshModalPrice(){$('#modalPrice').textContent=money(currentUnitPrice())}
+function ensureProductQuantityControl(){
+  if($('#productQuantityControl'))return;
+  const control=document.createElement('div');control.id='productQuantityControl';control.className='product-quantity-control';
+  control.innerHTML='<span>الكمية</span><div class="extra-qty"><button type="button" data-product-qty-minus aria-label="تقليل الكمية">−</button><strong id="productQuantityCount">1</strong><button type="button" data-product-qty-plus aria-label="زيادة الكمية">+</button></div>';
+  $('#modalNotes').closest('.field')?.before(control);
+  if(!control.isConnected)$('#modalPrice').after(control);
+}
+function refreshModalPrice(){const count=$('#productQuantityCount');if(count)count.textContent=String(data.selectedQuantity||1);$('#modalPrice').textContent=money(currentUnitPrice()*(data.selectedQuantity||1))}
+document.addEventListener('click',e=>{if(!e.target.closest('[data-product-qty-plus],[data-product-qty-minus]'))return;data.selectedQuantity=Math.max(1,Math.min(99,(data.selectedQuantity||1)+(e.target.closest('[data-product-qty-plus]')?1:-1)));refreshModalPrice()});
 function addSelected(){
   if(!data.selected)return;
   const chosenExtras=[...data.selectedExtras.entries()].map(([id,quantity])=>{const m=data.modifiers.find(x=>String(x.id)===String(id));return m?{id:m.id,name:m.name,price:Number(m.price||0),quantity:Number(quantity||1)}:null}).filter(Boolean);
-  data.appliedPromo=null;data.cart.push({key:Date.now()+Math.random(),product_id:data.selected.id,name:data.selected.name,variant_id:data.selectedVariant?.id||null,variant_name:data.selectedVariant?.name||'',base_price:data.selectedVariant?Number(data.selectedVariant.price||0):priceFor(data.selected),extras:chosenExtras,price:currentUnitPrice(),qty:1,notes:$('#modalNotes').value.trim()});
+  data.appliedPromo=null;data.cart.push({key:Date.now()+Math.random(),product_id:data.selected.id,name:data.selected.name,variant_id:data.selectedVariant?.id||null,variant_name:data.selectedVariant?.name||'',base_price:data.selectedVariant?Number(data.selectedVariant.price||0):priceFor(data.selected),extras:chosenExtras,price:currentUnitPrice(),qty:data.selectedQuantity||1,notes:$('#modalNotes').value.trim()});
   $('#productModal').classList.add('hidden');renderCart();
 }
 function renderCart(){
