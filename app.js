@@ -56,7 +56,7 @@ async function load(){
       get('delivery_zones?select=id,branch_id,name,delivery_fee,active&active=eq.true&order=name.asc').catch(()=>[])
     ]);
     data.branches=b;data.categories=c;data.products=p;data.branchProducts=bp;data.branchSettings=bs;data.branchHours=bh||[];if(biz?.[0])data.business={...data.business,...biz[0]};if(ws?.[0])data.websiteSettings={...data.websiteSettings,...ws[0]};data.paymentMethods=pay||[];data.branchPaymentMethods=bpay||[];data.deliveryZones=zones||[];data.variants=v;data.modifiers=m;data.productModifiers=pm;applyBusinessBranding();data.branch=null;renderBranchGate();renderDrawer();
-  }catch(e){console.error(e);$('#categoryCards').innerHTML='<div class="empty">تعذر تحميل المنيو حاليًا. يرجى المحاولة لاحقًا.</div>'}
+  }catch(e){console.error(e);$('#categoryCards').innerHTML='<div class="empty">تعذر تحميل المنيو حاليًا. <button type="button" id="retryMenuLoad">إعادة المحاولة</button></div>';$('#retryMenuLoad')?.addEventListener('click',load)}
 }
 
 function openDrawer(){renderDrawer();$('#siteDrawer')?.classList.remove('hidden');document.body.classList.add('drawer-open')}
