@@ -1,6 +1,6 @@
 {
-  "name": "Top Burger",
-  "short_name": "Top Burger",
+  "name": "Top Chicken Beta",
+  "short_name": "Top Chicken",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
