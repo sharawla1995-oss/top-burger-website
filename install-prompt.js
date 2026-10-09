@@ -9,7 +9,7 @@
   function ensure(){
     let el=document.getElementById('pwaInstallBanner'); if(el)return el;
     el=document.createElement('div'); el.id='pwaInstallBanner'; el.className='pwa-install-banner hidden';
-    el.innerHTML='<img src="icon-192.png" alt=""><div><b>حمّل تطبيق Top Chicken</b><small id="pwaInstallHint">افتحه أسرع من الشاشة الرئيسية</small></div><button type="button" id="pwaInstallAction">تحميل</button><button type="button" class="pwa-install-close" aria-label="إغلاق">×</button>';
+    el.innerHTML='<span class="top-chicken-install-mark" aria-hidden="true">🍗</span><div><b>حمّل تطبيق Top Chicken</b><small id="pwaInstallHint">افتحه أسرع من الشاشة الرئيسية</small></div><button type="button" id="pwaInstallAction">تحميل</button><button type="button" class="pwa-install-close" aria-label="إغلاق">×</button>';
     document.body.appendChild(el);
     el.querySelector('.pwa-install-close').onclick=()=>{el.classList.add('hidden');try{localStorage.setItem(DISMISS_KEY,String(Date.now()))}catch(_){}};
     el.querySelector('#pwaInstallAction').onclick=async()=>{
