@@ -1,0 +1,20 @@
+name: Variant Quantity Counters Gate
+on:
+  push:
+    branches: [feature/variant-quantity-counters-v1]
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - run: node --check app.js
+      - run: |
+          node - <<'NODE'
+          const fs=require('fs'); const s=fs.readFileSync('app.js','utf8');
+          for(const x of ['selectedVariantQty:new Map()','data-variant-plus','data-variant-minus','selectedExtrasByVariant','quantity:x.qty','quantity:Number(e.quantity||1)']) if(!s.includes(x)) throw new Error('missing '+x);
+          if(!s.includes('data.cart.push(...rows)')) throw new Error('variant rows are not added independently');
+          console.log('VARIANT_QUANTITY_COUNTERS_SOURCE_PASS');
+          NODE
