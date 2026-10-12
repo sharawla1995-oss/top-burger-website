@@ -279,3 +279,23 @@ body{background:var(--tc-cream);color:var(--tc-ink)}
 .branch-choice b{color:#b51f2b}
 .cat.active,.variant-option.active{border-color:#c6202e}
 @media(max-width:420px){.header{height:82px}.searchbar{top:82px}.welcome{margin:12px 10px}}
+
+/* TOP CHICKEN DISTINCT BRAND 2026-10 */
+:root{--tc-ink:#241514;--tc-hot:#b51f2b;--tc-flame:#f36b2b;--tc-cream:#fff6e9}
+body{background:var(--tc-cream)}
+.topline{background:linear-gradient(90deg,var(--tc-hot),var(--tc-flame))!important;height:5px}
+.header{background:#fffaf3;box-shadow:0 3px 22px #39100b12}
+.welcome{background:linear-gradient(120deg,#7d141d,#b51f2b 58%,#ef6b2b)!important;box-shadow:0 12px 32px #78151e30;border:1px solid #ffffff30}
+.v6-home-hero{border-radius:24px}
+.v6-hero-slide{background:linear-gradient(120deg,#3a1918,#8d1b24 65%,#d85c29);color:#fff}
+.v6-hero-slide h1{letter-spacing:-.025em}
+.top-chicken-wordmark{background:linear-gradient(120deg,#8e1720,#c3282b)!important;box-shadow:0 3px 12px #4a080b25}
+.branch-gate{background:radial-gradient(circle at 90% 15%,#f36b2b 0,transparent 35%),linear-gradient(150deg,#65161b,#bd282f 65%,#ed642c)!important}
+.branch-gate-card{background:#fffaf3}
+.category-card,.product-card{box-shadow:0 10px 26px #4c1c1416}
+.category-info{background:linear-gradient(90deg,#a51e25,#ee632f)!important}
+.product-body h3{color:#9e1c24}
+.cartbar,.primary,.checkout-submit{background:linear-gradient(105deg,#a51e25,#e65a2c)!important}
+.cat.active,.variant-option.active{border-color:#b51f2b}
+.v6-bottom-nav{background:#fffaf5}
+@media(prefers-reduced-motion:reduce){.category-card,.product-card{transition:none!important}}
