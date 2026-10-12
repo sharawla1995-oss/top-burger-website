@@ -50,3 +50,17 @@ html[data-theme="dark"] .v6-section-head small{color:#ffb488!important}
  .category-card .category-info b{font-size:14px!important;line-height:1.35!important}
  .category-card .category-info small{font-size:11px!important}
 }
+
+/* V9: enforce dark surface + light headings; light chips + dark text */
+html[data-theme="dark"] #categoryView,
+html[data-theme="dark"] .v6-menu-section{background:#111214!important;color:#f7f2ec!important}
+html[data-theme="dark"] .v6-section-head,
+html[data-theme="dark"] .v6-section-head h2,
+html[data-theme="dark"] .v6-section-head h2 span{background:transparent!important;color:#fff9f0!important}
+html[data-theme="light"] .v6-section-head,
+html[data-theme="light"] .v6-section-head h2{background:transparent!important;color:#281917!important}
+html[data-theme="dark"] .tc-feature-strip span,
+html[data-theme="light"] .tc-feature-strip span,
+body .tc-feature-strip span{background-color:#fff4e6!important;background-image:none!important;color:#2b1815!important;-webkit-text-fill-color:#2b1815!important;opacity:1!important}
+html[data-theme="dark"] .tc-feature-strip span *,
+html[data-theme="light"] .tc-feature-strip span *{color:#2b1815!important;-webkit-text-fill-color:#2b1815!important}
