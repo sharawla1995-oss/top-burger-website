@@ -214,7 +214,7 @@ function openProduct(id){
     $('#variantBox').classList.remove('hidden');
     $('#variantOptions').innerHTML=vs.map((v,i)=>`<div class="variant-option" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span><b>${esc(v.name)}</b><small>${money(v.price)}</small></span><div class="extra-qty"><button type="button" data-vminus="${v.id}">−</button><strong data-vcount="${v.id}">${i===0?1:0}</strong><button type="button" data-vplus="${v.id}">+</button></div></div>`).join('');data.selectedVariantQty.set(String(vs[0].id),1);
     $('#modalPrice').textContent=money(vs[0].price);
-  }else{$('#variantBox').classList.add('hidden');$('#modalPrice').textContent=money(priceFor(p))}
+  }else{$('#variantBox').classList.remove('hidden');data.selectedVariantQty.set('base',1);$('#variantOptions').innerHTML=`<div class="variant-option" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span><b>الكمية</b><small>${money(priceFor(p))}</small></span><div class="extra-qty"><button type="button" data-vminus="base">−</button><strong data-vcount="base">1</strong><button type="button" data-vplus="base">+</button></div></div>`;$('#modalPrice').textContent=money(priceFor(p))}
   const extras=productExtras(p);
   if(extras.length){
     $('#extrasBox').classList.remove('hidden');
@@ -228,13 +228,13 @@ function currentUnitPrice(){
   const extras=[...data.selectedExtras.entries()].reduce((sum,[id,qty])=>{const m=data.modifiers.find(x=>String(x.id)===String(id));return sum+(m?Number(m.price||0)*Number(qty||0):0)},0);
   return base+extras;
 }
-function refreshModalPrice(){const vs=productVariants(data.selected);const total=vs.length?vs.reduce((sum,v)=>sum+Number(data.selectedVariantQty.get(String(v.id))||0)*(Number(v.price||0)+currentExtrasPrice() ),0):currentUnitPrice()*Number(data.selectedVariantQty.get('base')||1);$('#modalPrice').textContent=money(total)}
+function refreshModalPrice(){const vs=productVariants(data.selected);const total=vs.length?vs.reduce((sum,v)=>sum+Number(data.selectedVariantQty.get(String(v.id))||0)*Number(v.price||0),0)+currentExtrasPrice():priceFor(data.selected)*Number(data.selectedVariantQty.get('base')||0)+currentExtrasPrice();$('#modalPrice').textContent=money(total)}
 function currentExtrasPrice(){return [...data.selectedExtras.entries()].reduce((sum,[id,n])=>{const m=data.modifiers.find(x=>String(x.id)===String(id));return sum+(m?Number(m.price||0)*Number(n):0)},0)}
 function addSelected(){
   if(!data.selected)return;
   const chosenExtras=[...data.selectedExtras.entries()].map(([id,quantity])=>{const m=data.modifiers.find(x=>String(x.id)===String(id));return m?{id:m.id,name:m.name,price:Number(m.price||0),quantity:Number(quantity||1)}:null}).filter(Boolean);
-  const vs=productVariants(data.selected);const selected=vs.length?vs.filter(v=>Number(data.selectedVariantQty.get(String(v.id))||0)>0):[null];if(!selected.length)return alert('اختار كمية واحدة على الأقل');
-  data.appliedPromo=null;for(const v of selected){const count=v?Number(data.selectedVariantQty.get(String(v.id))||0):Number(data.selectedVariantQty.get('base')||1);data.cart.push({key:Date.now()+Math.random(),product_id:data.selected.id,name:data.selected.name,variant_id:v?.id||null,variant_name:v?.name||'',base_price:v?Number(v.price||0):priceFor(data.selected),extras:chosenExtras.map(e=>({...e})),price:(v?Number(v.price||0):priceFor(data.selected))+currentExtrasPrice(),qty:count,notes:$('#modalNotes').value.trim()});}
+  const vs=productVariants(data.selected);const selected=vs.length?vs.filter(v=>Number(data.selectedVariantQty.get(String(v.id))||0)>0):(Number(data.selectedVariantQty.get('base')||0)>0?[null]:[]);if(!selected.length)return alert('اختار كمية واحدة على الأقل');
+  data.appliedPromo=null;for(const v of selected){const count=v?Number(data.selectedVariantQty.get(String(v.id))||0):Number(data.selectedVariantQty.get('base')||1);data.cart.push({key:Date.now()+Math.random(),product_id:data.selected.id,name:data.selected.name,variant_id:v?.id||null,variant_name:v?.name||'',base_price:v?Number(v.price||0):priceFor(data.selected),extras:chosenExtras.map(e=>({...e})),price:(v?Number(v.price||0):priceFor(data.selected)),qty:count,notes:$('#modalNotes').value.trim()});}
   $('#productModal').classList.add('hidden');renderCart();
 }
 function renderCart(){
